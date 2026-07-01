@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>注文一覧</title>
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+	<header class="header">
+		<h1>My Shop</h1>
+
+		<div class="header-right">
+			<a href="/orders">注文履歴を見る</a> <a href="/cart"><img
+				src="/images/cart.png" alt="カート" class="cart-icon"></a>
+		</div>
+	</header>
+
+
+	<div class="tabs">
+		<a th:href="@{/products}">All</a> <a th:each="c : ${categories}"
+			th:href="@{/products(category=${c.name})}"><span
+			th:text="${c.name}"></span></a>
+	</div>
+
+
+	<div th:if="${#lists.isEmpty(orders)}" class="center">注文履歴はありません</div>
+	<table border="1" th:if="${!#lists.isEmpty(orders)}" class="wrap">
+		<thead>
+			<tr>
+				<th>注文番号</th>
+				<th>合計金額</th>
+				<th>注文日時</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="order : ${orders}">
+				<td><a th:href="@{/orders/{no}(no=${order.no})}"> <span
+						th:text="${#numbers.formatInteger(order.no ,6)}"></span>
+				</a></td>
+				<td th:text="${order.total} +円" class="table-text"></td>
+				<td
+					th:text="${#temporals.format(order.datetime, 'yyyy/MM/dd HH:mm:ss')}"
+					class="table-text"></td>
+			</tr>
+		</tbody>
+	</table>
+
+
+</body>
+</html>
