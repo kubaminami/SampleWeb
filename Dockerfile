@@ -1,9 +1,9 @@
-FROM maven:3.9.6-eclipse-temurin-17
+FROM gradle:8.5-jdk17
 
 WORKDIR /app
 
 COPY . .
 
-RUN mvn clean package
+RUN gradle build
 
-CMD ["java", "-jar", "target/*.jar"]
+CMD ["java", "-jar", "build/libs/*.jar"]
