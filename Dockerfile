@@ -6,4 +6,4 @@ COPY . .
 
 RUN gradle build -x test
 
-CMD ["java", "-jar", "build/libs/*.jar"]
+CMD sh -c "java -jar build/libs/*.jar"
