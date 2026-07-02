@@ -30,14 +30,17 @@
 		<div th:each="p : ${products}" class="product-card">
 			<a th:href="@{/products/{id}(id=${p.id})}">
 				<p th:text="${p.name}" class="product-item a"></p> <img
-				th:src="${p.img}"  class="product-card img">
+				th:src="${p.img}" class="product-card img">
 			</a>
 			<p th:text="|${p.price}円|"></p>
+
+			<a th:href="@{/products/{id}/edit(id=${p.id})}">商品編集</a>
+
+
 		</div>
 	</div>
 
-
-
+	<a th:href="@{/products/new}">商品追加</a>
 
 </body>
 </html>
