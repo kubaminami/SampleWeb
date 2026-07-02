@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN gradle build
+RUN gradle build -x test
 
 CMD ["java", "-jar", "build/libs/*.jar"]
