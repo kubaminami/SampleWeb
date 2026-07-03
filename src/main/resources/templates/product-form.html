@@ -10,42 +10,43 @@
 	<div th:replace="~{fragments/header :: header}"></div>
 	<div th:replace="~{fragments/home :: home}"></div>
 
-	<form th:action="@{/products}" th:object="${product}" method="post">
+	<div class="edit-form">
+		<form th:action="@{/products}" th:object="${product}" method="post">
 
-		<div class="form-row">
-			<label class="form-label">商品名:</label> <input type="text"
-				th:field="*{name}" maxlength="20" required>
-		</div>
+			<div class="form-row">
+				<label class="form-label">商品名:</label> <input type="text"
+					th:field="*{name}" maxlength="20" required>
+			</div>
 
-		<div class="form-row">
-			<label class="form-label">価格:</label> <input type="number"
-				th:field="*{price}" min="0" max="999999" required>
-		</div>
+			<div class="form-row">
+				<label class="form-label">価格:</label> <input type="number"
+					th:field="*{price}" min="0" max="999999" required>
+			</div>
 
-		<div class="form-row">
-			<label class="form-label">カテゴリ:</label> <select
-				th:field="*{category}" required>
-				<option value="">選択してください</option>
+			<div class="form-row">
+				<label class="form-label">カテゴリ:</label> <select
+					th:field="*{category}" required>
+					<option value="">選択してください</option>
 
-				<option th:each="c : ${categories}" th:value="${c.name}"
-					th:text="${c.name}"></option>
-			</select>
-		</div>
+					<option th:each="c : ${categories}" th:value="${c.name}"
+						th:text="${c.name}"></option>
+				</select>
+			</div>
 
-		<div class="form-row">
-			<label class="form-label">説明:</label>
-			<textarea th:field="*{description}" rows="5" cols="60"
-				maxlength="255" required></textarea>
-		</div>
+			<div class="form-row">
+				<label class="form-label">説明:</label>
+				<textarea th:field="*{description}" rows="5" cols="60"
+					maxlength="255" required></textarea>
+			</div>
 
-		<div class="form-row">
-			<label class="form-label">画像パス:</label> <input type="text"
-				th:field="*{img}" maxlength="255" required>
-		</div>
+			<div class="form-row">
+				<label class="form-label">画像パス:</label> <input type="text"
+					th:field="*{img}" maxlength="255" required>
+			</div>
 
-		<button type="submit">登録</button>
+			<button type="submit">登録</button>
 
-	</form>
-
+		</form>
+	</div>
 </body>
 </html>
