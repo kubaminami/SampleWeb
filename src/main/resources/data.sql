@@ -1,3 +1,5 @@
+DELETE FROM orders;
+
 DELETE FROM category;
 
 INSERT INTO category(name)
