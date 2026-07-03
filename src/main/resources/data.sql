@@ -45,7 +45,26 @@ INSERT INTO product(name, price, description, category, img)
 VALUES ('商品H', 8000, '商品Hの説明です。', 'Sports', '/images/stopwatch.png');
 
 INSERT INTO product(name, price, description, category, img)
-VALUES ('商品G', 9000, '商品Iの説明です。', 'Electronics', '/images/kaden_soujiki_cordless_stick.png');
+VALUES ('商品I', 9000, '商品Iの説明です。', 'Electronics', '/images/kaden_soujiki_cordless_stick.png');
 
 INSERT INTO product(name, price, description, category, img)
-VALUES ('商品H', 10000, '商品Jの説明です。', 'Clothing', '/images/kodomofuku_boy.png');
+VALUES ('商品J', 10000, '商品Jの説明です。', 'Clothing', '/images/kodomofuku_boy.png');
+
+INSERT INTO product(name, price, description, category, img)
+VALUES ('商品K', 11000, '商品Kの説明です。', 'Clothing', '/images/fashion_tsuugakubou_cap.png');
+
+INSERT INTO product(name, price, description, category, img)
+VALUES ('商品L', 12000, '商品Lの説明です。', 'Clothing', '/images/shoes_anzen_gutsu.png');
+
+INSERT INTO product(name, price, description, category, img)
+VALUES ('商品M', 13000, '商品Mの説明です。', 'Sports', '/images/sports_softball__ball.png');
+
+INSERT INTO product(name, price, description, category, img)
+VALUES ('商品N', 14000, '商品Nの説明です。', 'Electronics', '/images/kaden_hanenashi_senpuki_kaze.png');
+
+INSERT INTO product(name, price, description, category, img)
+VALUES ('商品O', 15000, '商品Oの説明です。', 'Electronics', '/images/kaden_tablet.png');
+
+INSERT INTO product(name, price, description, category, img)
+VALUES ('商品P', 16000, '商品Pの説明です。', 'Sports', '/images/tabletennis_racket.png');
+
