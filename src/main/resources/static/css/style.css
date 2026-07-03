@@ -244,10 +244,13 @@ button:hover {
 
 /* 削除ボタン */
 .delete-btn {
-	width: 50px;
+	width: 80px;
 	height: 40px;
-	display: block;
 	margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+	
 }
 
 /* 合計金額 */
