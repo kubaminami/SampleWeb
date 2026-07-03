@@ -7,44 +7,20 @@
 </head>
 <body>
 
-	<header class="header">
-		<h1>My Shop</h1>
-
-		<div class="header-right">
-			<a href="/orders">注文履歴を見る</a> <a href="/cart"><img
-				src="/images/cart.png" alt="カート" class="cart-icon"></a>
-		</div>
-	</header>
-
-
-	<div class="tabs">
-		<a th:href="@{/products}">All</a> <a th:each="c : ${categories}"
-			th:href="@{/products(category=${c.name})}"><span
-			th:text="${c.name}"></span></a>
-	</div>
-
-
+	<div th:replace="~{fragments/header :: header}"></div>
+	<div th:replace="~{fragments/tabs :: categoryTabs}"></div>
 
 	<div class="product-detail">
-
-		<!-- 左：画像 -->
 		<div class="image-area">
 			<img th:src="${product.img}" th:alt="${product.name}"
 				class="info-area">
 			<h2 th:text="${product.name}"></h2>
-
 			<p class="price" th:text="|${product.price}円|"></p>
-
 			<p class="desc" th:text="${product.description}"></p>
-
 			<form th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
-				<button class="cart-btn">カートに追加</button>
+				<button class="btn">カートに追加</button>
 			</form>
-			<!-- <a href="/products">一覧に戻る</a> -->
-
 		</div>
-
-
 	</div>
 </body>
 </html>

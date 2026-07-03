@@ -7,22 +7,8 @@
 </head>
 <body>
 
-	<header class="header">
-		<h1>My Shop</h1>
-
-		<div class="header-right">
-			<a href="/orders">注文履歴を見る</a> <a href="/cart"><img
-				src="/images/cart.png" alt="カート" class="cart-icon"></a>
-		</div>
-	</header>
-
-
-	<div class="tabs">
-		<a th:href="@{/products}">All</a> <a th:each="c : ${categories}"
-			th:href="@{/products(category=${c.name})}"><span
-			th:text="${c.name}"></span></a>
-	</div>
-
+	<div th:replace="~{fragments/header :: header}"></div>
+	<div th:replace="~{fragments/tabs :: categoryTabs}"></div>
 
 	<table border="1" th:if="${!#lists.isEmpty(cart)}" class="wrap">
 		<thead>
@@ -46,9 +32,7 @@
 		</tbody>
 	</table>
 
-
-
-	<div th:with="total=${#aggregates.sum(cart.![price])}"  class="center">
+	<div th:with="total=${#aggregates.sum(cart.![price])}" class="center">
 		<p th:if="${total == null}">カートに入っている商品はありません</p>
 		<div th:unless="${total == null}">
 			合計： <span th:text="${total} + 円" class="total"></span>
@@ -57,15 +41,6 @@
 			</form>
 		</div>
 	</div>
-
-
-
-
-
-
-
-
-
 
 </body>
 </html>

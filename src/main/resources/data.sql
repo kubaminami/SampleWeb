@@ -1,3 +1,5 @@
+DELETE FROM category;
+
 INSERT INTO category(name)
 VALUES ('Books');
 
@@ -8,7 +10,15 @@ INSERT INTO category(name)
 VALUES ('Sports');
 
 INSERT INTO category(name)
+VALUES ('Electronics');
+
+INSERT INTO category(name)
+VALUES ('Clothing');
+
+INSERT INTO category(name)
 VALUES ('Foods');
+
+DELETE FROM product;
 
 INSERT INTO product(name, price, description, category, img)
 VALUES ('商品A', 1000, '商品Aの説明です。', 'Books', '/images/omake_zasshi_otona.png');
@@ -33,3 +43,9 @@ VALUES ('商品G', 7000, '商品Gの説明です。', 'Sports', '/images/sports_
 
 INSERT INTO product(name, price, description, category, img)
 VALUES ('商品H', 8000, '商品Hの説明です。', 'Sports', '/images/stopwatch.png');
+
+INSERT INTO product(name, price, description, category, img)
+VALUES ('商品G', 9000, '商品Iの説明です。', 'Electronics', '/images/kaden_soujiki_cordless_stick.png');
+
+INSERT INTO product(name, price, description, category, img)
+VALUES ('商品H', 10000, '商品Jの説明です。', 'Clothing', '/images/kodomofuku_boy.png');

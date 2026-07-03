@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+	<div th:fragment="categoryTabs" class="tabs">
+
+		<div class="tabs">
+			<a th:href="@{/products}">All</a> <a th:each="c : ${categories}"
+				th:href="@{/products(category=${c.name})}"
+				th:class="${selectedCategory == c.name}
+          ? 'tab active-tab'
+          : 'tab'"><span
+				th:text="${c.name}"></span></a>
+		</div>
+
+	</div>
+
+</body>
+</html>

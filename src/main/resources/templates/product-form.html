@@ -3,38 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <title>商品登録</title>
+<link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+
+	<div th:replace="~{fragments/header :: header}"></div>
+	<div th:replace="~{fragments/tabs :: categoryTabs}"></div>
 
 	<h1>商品登録</h1>
 
 	<form th:action="@{/products}" th:object="${product}" method="post">
 
-		<p>
-			商品名: <input type="text" th:field="*{name}">
-		</p>
+		<div class="form-row">
+			<label class="form-label">商品名:</label> <input type="text"
+				th:field="*{name}" maxlength="20" required>
+		</div>
 
-		<p>
-			価格: <input type="number" th:field="*{price}">
-		</p>
+		<div class="form-row">
+			<label class="form-label">価格:</label> <input type="number"
+				th:field="*{price}" min="0" max="999999" required>
+		</div>
 
-		<p>
-			カテゴリ: <select th:field="*{category}">
+		<div class="form-row">
+			<label class="form-label">カテゴリ:</label> <select
+				th:field="*{category}" required>
 				<option value="">選択してください</option>
 
 				<option th:each="c : ${categories}" th:value="${c.name}"
 					th:text="${c.name}"></option>
 			</select>
+		</div>
 
-		</p>
+		<div class="form-row">
+			<label class="form-label">説明:</label>
+			<textarea th:field="*{description}" rows="5" cols="60"
+				maxlength="255" required></textarea>
+		</div>
 
-		<p>
-			説明: <input type="text" th:field="*{description}">
-		</p>
-
-		<p>
-			画像URL: <input type="text" th:field="*{img}">
-		</p>
+		<div class="form-row">
+			<label class="form-label">画像パス:</label> <input type="text"
+				th:field="*{img}" maxlength="255" required>
+		</div>
 
 		<button type="submit">登録</button>
 

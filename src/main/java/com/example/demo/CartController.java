@@ -93,25 +93,6 @@ public class CartController {
 		return "redirect:/order/complete";
 	}
 
-	
-	
-	/*
-	 * // 注文
-	 * 
-	 * @PostMapping("/order") public String order(@ModelAttribute("cart")
-	 * List<Product> cart) {
-	 * 
-	 * for (Product p : cart) { Orders o = new Orders();
-	 * o.setDatetime(LocalDateTime.now()); o.setTotal(p.getPrice());
-	 * ordersrepo.save(o); }
-	 * 
-	 * cart.clear();
-	 * 
-	 * return "redirect:/order/complete"; }
-	 * 
-	 * 
-	 */	
-	
 	// 完了ページ
 	@GetMapping("/order/complete")
 	public String complete() {

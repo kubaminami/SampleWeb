@@ -7,22 +7,8 @@
 </head>
 <body>
 
-	<header class="header">
-		<h1>My Shop</h1>
-
-		<div class="header-right">
-			<a href="/orders">注文履歴を見る</a> <a href="/cart"><img
-				src="/images/cart.png" alt="カート" class="cart-icon"></a>
-		</div>
-	</header>
-
-
-	<div class="tabs">
-		<a th:href="@{/products}">All</a> <a th:each="c : ${categories}"
-			th:href="@{/products(category=${c.name})}"><span
-			th:text="${c.name}"></span></a>
-	</div>
-
+	<div th:replace="~{fragments/header :: header}"></div>
+	<div th:replace="~{fragments/tabs :: categoryTabs}"></div>
 
 	<div th:if="${#lists.isEmpty(orders)}" class="center">注文履歴はありません</div>
 	<table border="1" th:if="${!#lists.isEmpty(orders)}" class="wrap">
@@ -45,7 +31,6 @@
 			</tr>
 		</tbody>
 	</table>
-
 
 </body>
 </html>

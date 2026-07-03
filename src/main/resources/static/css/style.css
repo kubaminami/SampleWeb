@@ -51,9 +51,26 @@ body {
 	background: #c8d2de;
 }
 
-.tabs a.active {
-	background: #007bff;
+.active-tab {
+	background-color: #4e73df;
 	color: white;
+	font-weight: bold;
+}
+
+/* 商品追加ボタン */
+.add-product-btn {
+	margin-bottom: 10px;
+	background-color: #28a745;
+	color: white;
+	text-decoration: none;
+	padding: 10px 15px;
+	border-radius: 5px;
+	display: inline-block;
+	background-color: #28a745;
+}
+
+.add-product-btn:hover {
+	background: #009900;
 }
 
 /* 商品一覧 */
@@ -70,6 +87,10 @@ body {
 	padding: 15px;
 	text-align: center;
 	border-radius: 5px;
+}
+
+.product-item {
+	height: 48px;
 }
 
 /* 画像 */
@@ -270,4 +291,30 @@ th {
 
 .total-row {
 	font-weight: bold;
+}
+
+.form-label {
+	display: inline-block;
+	text-align: right;
+	width: 80px;
+	font-weight: bold;
+}
+
+.form-row {
+	margin-bottom: 15px;
+}
+
+.form-row textarea {
+	height: 100px;
+	resize: none;
+}
+
+.form-row input, .form-row select, .form-row textarea {
+	width: 600px;
+	box-sizing: border-box;
+}
+
+.delete-btn-area {
+	margin-left: 0px;
+	margin-top: 20px;
 }
