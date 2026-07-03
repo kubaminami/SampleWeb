@@ -8,7 +8,7 @@
 <body>
 
 	<div th:replace="~{fragments/header :: header}"></div>
-	<div th:replace="~{fragments/tabs :: categoryTabs}"></div>
+	<div th:replace="~{fragments/home :: home}"></div>
 
 	<div th:if="${#lists.isEmpty(orders)}" class="center">注文履歴はありません</div>
 	<table border="1" th:if="${!#lists.isEmpty(orders)}" class="wrap">

@@ -8,9 +8,7 @@
 <body>
 
 	<div th:replace="~{fragments/header :: header}"></div>
-	<div th:replace="~{fragments/tabs :: categoryTabs}"></div>
-
-	<h1>商品登録</h1>
+	<div th:replace="~{fragments/home :: home}"></div>
 
 	<form th:action="@{/products}" th:object="${product}" method="post">
 

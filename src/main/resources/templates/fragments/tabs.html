@@ -3,16 +3,14 @@
 <body>
 
 	<div th:fragment="categoryTabs" class="tabs">
-
-		<div class="tabs">
-			<a th:href="@{/products}">All</a> <a th:each="c : ${categories}"
-				th:href="@{/products(category=${c.name})}"
-				th:class="${selectedCategory == c.name}
+		<a th:href="@{/products}" th:class="${selectedCategory == null}
+          ? 'tab active-tab'
+          : 'tab'">All</a> <a th:each="c : ${categories}"
+			th:href="@{/products(category=${c.name})}"
+			th:class="${selectedCategory == c.name}
           ? 'tab active-tab'
           : 'tab'"><span
-				th:text="${c.name}"></span></a>
-		</div>
-
+			th:text="${c.name}"></span></a>
 	</div>
 
 </body>
