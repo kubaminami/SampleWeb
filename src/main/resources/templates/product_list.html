@@ -10,9 +10,11 @@
 	<div th:replace="~{fragments/header :: header}"></div>
 	<div th:replace="~{fragments/tabs :: categoryTabs}"></div>
 
-	<a th:href="@{/products/new}">
-		<button class="add-product-btn">商品追加</button>
-	</a>
+	<p th:if="${loginUser != null}">
+		<a th:href="@{/products/new}">
+			<button class="add-product-btn">＋商品追加</button>
+		</a>
+	</p>
 
 	<div class="product-list">
 		<div th:if="${#lists.isEmpty(products)}">商品がありません</div>
@@ -23,7 +25,9 @@
 			</a>
 			<p th:text="|${p.price}円|"></p>
 
-			<a th:href="@{/products/{id}/edit(id=${p.id})}">[編集]</a>
+			<p th:if="${loginUser != null}">
+				<a th:href="@{/products/{id}/edit(id=${p.id})}">[編集]</a>
+			</p>
 		</div>
 	</div>
 

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>マイページ</title>
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+	<div th:replace="~{fragments/header :: header}"></div>
+	<div th:replace="~{fragments/home :: home}"></div>
+
+	<div class="form-container">
+
+		<h1>マイページ</h1>
+
+		<div class="form-row">
+			<label>名前</label>
+		</div>
+		<div class="form-row">
+			<span th:text="${loginUser.name}"></span>
+		</div>
+		<div class="form-row">
+			<label>メールアドレス</label>
+		</div>
+		<div class="form-row">
+			<span th:text="${loginUser.email}"></span>
+		</div>
+		<div class="form-row">
+			<a th:href="@{/logout}"><button class="red-btn">ログアウト</button></a>
+		</div>
+	</div>
+</body>
+</html>

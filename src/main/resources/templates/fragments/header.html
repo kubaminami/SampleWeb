@@ -3,12 +3,34 @@
 <body>
 
 	<header th:fragment="header" class="header">
-		<h1>My Shop</h1>
+
+		<div class="header-left">
+			<h1>My Shop</h1>
+			<p th:if="${loginUser != null}">
+				ようこそ、 <span th:text="${loginUser.name}"></span> さん
+			</p>
+		</div>
+
 		<div class="header-right">
-			<a href="/orders">注文履歴を見る</a> <a href="/cart"><img
-				src="/images/cart.png" alt="カート" class="cart-icon"></a>
+
+			<p th:if="${session.loginUser == null}">
+				<a th:href="@{/login}">ログイン</a>
+			</p>
+
+			<div th:if="${loginUser != null}" class="header-rows">
+				<p>
+					<a th:href="@{/mypage}">マイページ</a>
+				</p>
+				<p>
+					<a href="/orders">注文履歴を見る</a>
+				</p>
+			</div>
+
+
+			<a href="/cart"><img src="/images/cart.png" alt="カート"
+				class="cart-icon"></a>
 		</div>
 	</header>
-	
+
 </body>
 </html>

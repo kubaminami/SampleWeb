@@ -6,14 +6,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
-@SessionAttributes("cart")
 public class CartController {
 
 	@Autowired
@@ -26,14 +27,20 @@ public class CartController {
 	private OrderItemsRepository ordersItemsRepo;
 
 	// カート初期化
-	@ModelAttribute("cart")
 	public List<Product> cart() {
 		return new ArrayList<>();
 	}
 
 	// カート追加
 	@PostMapping("/cart/add/{id}")
-	public String add(@PathVariable("id") long id, @ModelAttribute("cart") List<Product> cart) {
+	public String add(@PathVariable("id") long id, HttpSession session) {
+
+		List<Product> cart = (List<Product>) session.getAttribute("cart");
+
+		if (cart == null) {
+			cart = new ArrayList<>();
+			session.setAttribute("cart", cart);
+		}
 
 		Product product = repo.findById(id).orElseThrow();
 		cart.add(product);
@@ -43,18 +50,32 @@ public class CartController {
 
 	// カート表示
 	@GetMapping("/cart")
-	public String view() {
+	public String view(HttpSession session, Model model) {
+
+		List<Product> cart = (List<Product>) session.getAttribute("cart");
+
+		if (cart == null) {
+			cart = new ArrayList<>();
+		}
+
+		model.addAttribute("cart", cart);
+
 		return "cart";
 	}
 
 	// カートから削除
 	@PostMapping("/cart/delete/{id}")
-	public String delete(@PathVariable("id") long id, @ModelAttribute("cart") List<Product> cart) {
+	public String delete(@PathVariable("id") long id, HttpSession session) {
 
-		for (Product p : cart) {
-			if (p.getId() == id) {
-				cart.remove(p);
-				break;
+		List<Product> cart = (List<Product>) session.getAttribute("cart");
+
+		if (cart != null) {
+
+			for (Product p : cart) {
+				if (p.getId() == id) {
+					cart.remove(p);
+					break;
+				}
 			}
 		}
 
@@ -63,7 +84,20 @@ public class CartController {
 
 	// 注文
 	@PostMapping("/order")
-	public String order(@ModelAttribute("cart") List<Product> cart) {
+	public String order(HttpSession session, RedirectAttributes redirectAttributes) {
+
+		// ログインしていない場合
+		User loginUser = (User) session.getAttribute("loginUser");
+
+		if (loginUser == null) {
+			redirectAttributes.addFlashAttribute("message", "注文するにはログインしてください。");
+			return "redirect:/login";
+		}
+
+		List<Product> cart = (List<Product>) session.getAttribute("cart");
+		if (cart == null || cart.isEmpty()) {
+			return "redirect:/cart";
+		}
 
 		// Orders
 		Orders o = new Orders();

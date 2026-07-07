@@ -3,12 +3,16 @@ package com.example.demo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/products")
@@ -21,7 +25,14 @@ public class ProductController {
 
 	// 商品登録ページ
 	@GetMapping("/new")
-	public String showCreateForm(Model model) {
+	public String showCreateForm(Model model, HttpSession session) {
+
+		User loginUser = (User) session.getAttribute("loginUser");
+
+		if (loginUser == null) {
+			return "redirect:/login";
+		}
+
 		model.addAttribute("product", new Product());
 		model.addAttribute("categories", catRepo.findAll());
 		return "product-form";
@@ -29,14 +40,26 @@ public class ProductController {
 
 	// 登録処理
 	@PostMapping
-	public String createProduct(@ModelAttribute Product product) {
+	public String createProduct(@Valid @ModelAttribute Product product, BindingResult result, Model model) {
+
+		if (result.hasErrors()) {
+			model.addAttribute("categories", catRepo.findAll());
+			return "product-form";
+		}
+
 		proRepo.save(product);
 		return "redirect:/products";
 	}
 
 	// 商品編集ページ
 	@GetMapping("/{id}/edit")
-	public String showEditForm(@PathVariable("id") Long id, Model model) {
+	public String showEditForm(@PathVariable("id") Long id, Model model, HttpSession session) {
+
+		User loginUser = (User) session.getAttribute("loginUser");
+
+		if (loginUser == null) {
+			return "redirect:/login";
+		}
 
 		Product product = proRepo.findById(id).orElseThrow();
 
@@ -74,7 +97,14 @@ public class ProductController {
 
 	// 一覧ページ
 	@GetMapping
-	public String list(@RequestParam(name = "category", required = false) String category, Model model) {
+	public String list(@RequestParam(name = "category", required = false) String category, Model model,
+			HttpSession session) {
+
+		//ログイン情報がある場合
+		if (session != null) {
+			User loginUser = (User) session.getAttribute("loginUser");
+			model.addAttribute("loginUser", loginUser);
+		}
 
 		if (category == null) {
 			model.addAttribute("products", proRepo.findAll());

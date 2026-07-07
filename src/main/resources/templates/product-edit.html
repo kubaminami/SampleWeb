@@ -10,46 +10,59 @@
 	<div th:replace="~{fragments/header :: header}"></div>
 	<div th:replace="~{fragments/home :: home}"></div>
 
-	<div class="edit-form">
+	<div class="form-container">
+		<h1>商品編集</h1>
+		
 		<form th:action="@{/products}" th:object="${product}" method="post">
 
 			<div class="form-row">
-				<label class="form-label">商品名:</label> <input type="text"
-					th:field="*{name}" maxlength="20" required>
+				<label>商品名</label>
+			</div>
+			<div class="form-row">
+				<input type="text" th:field="*{name}" maxlength="20" required>
 			</div>
 
 			<div class="form-row">
-				<label class="form-label">価格:</label> <input type="number"
-					th:field="*{price}" min="0" max="999999" required>
+				<label>価格</label>
 			</div>
-
 			<div class="form-row">
-				<label class="form-label">カテゴリ:</label> <select
-					th:field="*{category}" required>
+				<input type="number" th:field="*{price}" min="0" max="999999"
+					required>
+			</div>
+			<div class="form-row">
+
+				<label>カテゴリ</label>
+			</div>
+			<div class="form-row">
+				<select th:field="*{category}" required>
 					<option value="">選択してください</option>
 
 					<option th:each="c : ${categories}" th:value="${c.name}"
 						th:text="${c.name}"></option>
 				</select>
 			</div>
-
 			<div class="form-row">
-				<label class="form-label">説明:</label>
+				<label>説明</label>
+			</div>
+			<div class="form-row">
 				<textarea th:field="*{description}" rows="5" cols="60"
 					maxlength="255" required></textarea>
 			</div>
 
 			<div class="form-row">
-				<label class="form-label">画像パス:</label> <input type="text"
-					th:field="*{img}" maxlength="255" required>
+				<label>画像パス</label>
 			</div>
+			<div class="form-row">
+				<input type="text" th:field="*{img}" maxlength="255" required>
+			</div>
+
 
 			<button type="submit">更新</button>
 		</form>
 
 		<form th:action="@{/products/{id}/delete(id=${product.id})}"
 			method="post" class="delete-btn-area">
-			<button type="submit" class="product-delete-btn"
+			<button type="submit" class="red-btn"
 				onclick="return confirm('本当に削除しますか？');">削除</button>
 		</form>
 	</div>
