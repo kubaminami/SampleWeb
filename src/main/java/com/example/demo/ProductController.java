@@ -109,7 +109,7 @@ public class ProductController {
 		}
 
 		if (category == null) {
-			model.addAttribute("products", proRepo.findAll());
+			model.addAttribute("products", proRepo.findAllByOrderByIdAsc());
 		} else {
 			model.addAttribute("products", proRepo.findByCategory(category));
 		}
