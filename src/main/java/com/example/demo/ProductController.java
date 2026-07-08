@@ -76,7 +76,7 @@ public class ProductController {
 	public String updateProduct(@PathVariable("id") Long id, @ModelAttribute Product form) {
 
 		Product product = proRepo.findById(id).orElseThrow();
-
+		
 		product.setName(form.getName());
 		product.setPrice(form.getPrice());
 		product.setCategory(form.getCategory());

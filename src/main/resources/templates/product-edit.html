@@ -13,7 +13,7 @@
 	<div class="form-container">
 		<h1>商品編集</h1>
 		
-		<form th:action="@{/products}" th:object="${product}" method="post">
+		<form th:action="@{/products/{id}/edit(id=${product.id})}" th:object="${product}" method="post">
 
 			<div class="form-row">
 				<label>商品名</label>
