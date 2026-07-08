@@ -14,14 +14,17 @@ public class LoginController {
 	@Autowired
 	private UserRepository userRepository;
 
+	//ログインページ
 	@GetMapping("/login")
 	public String showLoginForm() {
 		return "login";
 	}
 
+	//ログイン処理
 	@PostMapping("/login")
 	public String searchLoginUser(LoginForm form, HttpSession session, Model model) {
 
+		//未入力がある
 		if (form.getEmail() == null || form.getEmail().isBlank() || form.getPassword() == null
 				|| form.getPassword().isBlank()) {
 
@@ -30,6 +33,7 @@ public class LoginController {
 			return "login";
 		}
 
+		//メールアドレスが登録されていない
 		User user = userRepository.findByEmail(form.getEmail());
 
 		if (user == null) {
@@ -39,17 +43,19 @@ public class LoginController {
 			return "login";
 		}
 
+		//メールアドレスとパスワードの組み合わせが一致しない
 		if (!user.getPassword().equals(form.getPassword())) {
 			model.addAttribute("message", "メールアドレスまたはパスワードが違います。");
 
 			return "login";
 		}
 
+		//ログインする
 		session.setAttribute("loginUser", user);
-
 		return "redirect:/products";
 	}
 
+	//ログアウト処理
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
 
@@ -58,6 +64,7 @@ public class LoginController {
 		return "redirect:/login";
 	}
 
+	//マイページを表示
 	@GetMapping("/mypage")
 	public String mypage(HttpSession session, Model model) {
 

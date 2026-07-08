@@ -13,6 +13,7 @@ public class SignupController {
 	@Autowired
 	private UserRepository userRepository;
 
+	//登録ページを表示
 	@GetMapping("/signup")
 	public String showSignupForm(Model model) {
 
@@ -21,10 +22,11 @@ public class SignupController {
 		return "signup";
 	}
 
-
+	//登録処理
 	@PostMapping("/signup")
 	public String signup(@ModelAttribute SignupForm signupForm, Model model) {
 
+		//未入力がある
 		if (signupForm.getName() == null || signupForm.getName().isBlank() ||
 				signupForm.getEmail() == null || signupForm.getEmail().isBlank() || signupForm.getPassword() == null
 				|| signupForm.getPassword().isBlank()) {
@@ -34,6 +36,7 @@ public class SignupController {
 			return "signup";
 		}
 		
+		//メールアドレスの重複
 		User existingUser = userRepository.findByEmail(signupForm.getEmail());
 
 		if (existingUser != null) {
@@ -42,6 +45,7 @@ public class SignupController {
 			return "signup";
 		}
 
+		//登録する
 		User user = new User();
 
 		user.setName(signupForm.getName());
