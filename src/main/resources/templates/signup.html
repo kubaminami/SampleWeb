@@ -13,35 +13,36 @@
 	<div class="form-container">
 		<h1>会員登録</h1>
 
-		<form th:action="@{/signup}" th:object="${signupForm}" method="post">
+		<p th:if="${message}" class="error-message" th:text="${message}">
 
-			<div class="login-form-row">
-				<p>
-					<label class="login-label">名前</label>
-				</p>
-				<p>
-					<input type="text" th:field="*{name}">
-				</p>
+			<form th:action="@{/signup}" th:object="${signupForm}" method="post">
 
-				<p>
-					<label class="login-label">メールアドレス</label>
-				</p>
-				<p>
-					<input type="email" th:field="*{email}">
-				</p>
+				<div class="login-form-row">
+					<p>
+						<label class="login-label">名前</label>
+					</p>
+					<p>
+						<input type="text" th:field="*{name}">
+					</p>
 
-				<p>
-					<label class="login-label">パスワード</label>
-				</p>
-				<p>
-					<input type="password" th:field="*{password}">
-				</p>
-			</div>
+					<p>
+						<label class="login-label">メールアドレス</label>
+					</p>
+					<p>
+						<input type="email" th:field="*{email}">
+					</p>
 
-			<button type="submit">登録</button>
+					<p>
+						<label class="login-label">パスワード</label>
+					</p>
+					<p>
+						<input type="password" th:field="*{password}">
+					</p>
+				</div>
 
-		</form>
+				<button type="submit">登録</button>
 
+			</form>
 	</div>
 
 </body>

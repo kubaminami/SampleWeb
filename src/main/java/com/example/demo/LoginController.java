@@ -20,22 +20,34 @@ public class LoginController {
 	}
 
 	@PostMapping("/login")
-	public String searchLoginUser(LoginForm form, HttpSession session) {
+	public String searchLoginUser(LoginForm form, HttpSession session, Model model) {
+
+		if (form.getEmail() == null || form.getEmail().isBlank() || form.getPassword() == null
+				|| form.getPassword().isBlank()) {
+
+			model.addAttribute("message", "メールアドレスとパスワードを入力してください。");
+
+			return "login";
+		}
 
 		User user = userRepository.findByEmail(form.getEmail());
 
 		if (user == null) {
+
+			model.addAttribute("message", "メールアドレスまたはパスワードが違います。");
+
 			return "login";
 		}
 
-		if (user.getPassword().equals(form.getPassword())) {
+		if (!user.getPassword().equals(form.getPassword())) {
+			model.addAttribute("message", "メールアドレスまたはパスワードが違います。");
 
-			session.setAttribute("loginUser", user);
-
-			return "redirect:/products";
+			return "login";
 		}
 
-		return "login";
+		session.setAttribute("loginUser", user);
+
+		return "redirect:/products";
 	}
 
 	@GetMapping("/logout")
