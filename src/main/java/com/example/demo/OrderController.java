@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import jakarta.servlet.http.HttpSession;
+
 @RequestMapping("/orders")
 @Controller
 public class OrderController {
@@ -16,14 +18,20 @@ public class OrderController {
 
 	// 注文履歴
 	@GetMapping
-	public String list(Model model) {
+	public String list(Model model, HttpSession session) {
+		
+		User loginUser = (User) session.getAttribute("loginUser");
+		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("orders", ordersRepo.findAll());
 		return "order_list";
 	}
 
 	// 注文詳細
 	@GetMapping("/{no}")
-	public String detail(@PathVariable("no") Long no, Model model) {
+	public String detail(@PathVariable("no") Long no, Model model, HttpSession session) {
+		
+		User loginUser = (User) session.getAttribute("loginUser");
+		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("order", ordersRepo.findById(no).orElseThrow());
 
 		return "order_detail";
