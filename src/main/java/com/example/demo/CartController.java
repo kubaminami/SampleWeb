@@ -58,6 +58,8 @@ public class CartController {
 			cart = new ArrayList<>();
 		}
 
+		User loginUser = (User) session.getAttribute("loginUser");
+		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("cart", cart);
 
 		return "cart";
@@ -129,7 +131,10 @@ public class CartController {
 
 	// 完了ページ
 	@GetMapping("/order/complete")
-	public String complete() {
+	public String complete(Model model, HttpSession session) {
+
+		User loginUser = (User) session.getAttribute("loginUser");
+		model.addAttribute("loginUser", loginUser);
 
 		return "order_complete";
 

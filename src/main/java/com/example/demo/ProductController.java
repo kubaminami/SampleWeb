@@ -33,6 +33,7 @@ public class ProductController {
 			return "redirect:/login";
 		}
 
+		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("product", new Product());
 		model.addAttribute("categories", catRepo.findAll());
 		return "product-form";
@@ -62,7 +63,8 @@ public class ProductController {
 		}
 
 		Product product = proRepo.findById(id).orElseThrow();
-
+		
+		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("product", product);
 		model.addAttribute("categories", catRepo.findAll());
 
@@ -120,7 +122,9 @@ public class ProductController {
 
 	// 詳細ページ
 	@GetMapping("/{id:[0-9]+}")
-	public String detail(@PathVariable("id") Long id, Model model) {
+	public String detail(@PathVariable("id") Long id, Model model, HttpSession session) {
+		User loginUser = (User) session.getAttribute("loginUser");
+		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("product", proRepo.findById(id).orElseThrow());
 		return "product_detail";
 	}
