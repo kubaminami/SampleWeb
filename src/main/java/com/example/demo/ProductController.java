@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Comparator;
 
 @Controller
 @RequestMapping("/products")
@@ -54,7 +56,10 @@ public class ProductController {
 
 	// 商品編集ページ
 	@GetMapping("/{id}/edit")
-	public String showEditForm(@PathVariable("id") Long id, Model model, HttpSession session) {
+	public String showEditForm(@PathVariable("id") Long id, Model model,
+			@RequestParam(name = "selectedCategory", required = false) String selectedCategory,
+			@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort, HttpSession session) {
 
 		User loginUser = (User) session.getAttribute("loginUser");
 
@@ -63,20 +68,26 @@ public class ProductController {
 		}
 
 		Product product = proRepo.findById(id).orElseThrow();
-		
+
 		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("product", product);
 		model.addAttribute("categories", catRepo.findAll());
 
+		model.addAttribute("selectedCategory", selectedCategory);
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("sort", sort);
 		return "product-edit";
 	}
 
 	// 編集処理
 	@PostMapping("/{id}/edit")
-	public String updateProduct(@PathVariable("id") Long id, @ModelAttribute Product form) {
+	public String updateProduct(@PathVariable("id") Long id, @ModelAttribute Product form,
+			@RequestParam(name = "selectedCategory", required = false) String selectedCategory,
+			@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort, Model model) {
 
 		Product product = proRepo.findById(id).orElseThrow();
-		
+
 		product.setName(form.getName());
 		product.setPrice(form.getPrice());
 		product.setCategory(form.getCategory());
@@ -85,7 +96,9 @@ public class ProductController {
 
 		proRepo.save(product);
 
-		return "redirect:/products";
+		return "redirect:/products?selectedCategory=" + selectedCategory
+				+ "&keyword=" + keyword
+				+ "&sort=" + sort;
 	}
 
 	// 削除処理
@@ -99,22 +112,40 @@ public class ProductController {
 
 	// 一覧ページ
 	@GetMapping
-	public String list(@RequestParam(name = "category", required = false) String category, Model model,
+	public String list(
+			@RequestParam(name = "selectedCategory", required = false) String selectedCategory,
+			@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort,
+			Model model,
 			HttpSession session) {
 
-		//ログイン情報がある場合
-		if (session != null) {
-			User loginUser = (User) session.getAttribute("loginUser");
-			model.addAttribute("loginUser", loginUser);
-		}
+		User loginUser = (User) session.getAttribute("loginUser");
+		model.addAttribute("loginUser", loginUser);
 
-		if (category == null) {
-			model.addAttribute("products", proRepo.findAllByOrderByIdAsc());
+		List<Product> products;
+
+		if (selectedCategory != null && !selectedCategory.isBlank() && keyword != null && !keyword.isBlank()) {
+			products = proRepo.findByCategoryAndNameContainingIgnoreCase(selectedCategory, keyword);
+		} else if (keyword != null && !keyword.isBlank()) {
+			products = proRepo.findByNameContainingIgnoreCase(keyword);
+		} else if (selectedCategory != null && !selectedCategory.isBlank()) {
+			products = proRepo.findByCategory(selectedCategory);
 		} else {
-			model.addAttribute("products", proRepo.findByCategory(category));
+			products = proRepo.findAllByOrderByIdAsc();
 		}
 
-		model.addAttribute("selectedCategory", category);
+		if ("priceAsc".equals(sort)) {
+			products.sort(Comparator.comparing(Product::getPrice));
+		} else if ("priceDesc".equals(sort)) {
+			products.sort(Comparator.comparing(Product::getPrice).reversed());
+		} else {
+			products.sort(Comparator.comparing(Product::getId));
+		}
+
+		model.addAttribute("products", products);
+		model.addAttribute("selectedCategory", selectedCategory);
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("sort", sort);
 		model.addAttribute("categories", catRepo.findAll());
 
 		return "product_list";
@@ -122,10 +153,17 @@ public class ProductController {
 
 	// 詳細ページ
 	@GetMapping("/{id:[0-9]+}")
-	public String detail(@PathVariable("id") Long id, Model model, HttpSession session) {
+	public String detail(@PathVariable("id") Long id,
+			@RequestParam(name = "selectedCategory", required = false) String selectedCategory,
+			@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort, Model model,
+			HttpSession session) {
 		User loginUser = (User) session.getAttribute("loginUser");
 		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("product", proRepo.findById(id).orElseThrow());
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("sort", sort);
+		model.addAttribute("selectedCategory", selectedCategory);
 		return "product_detail";
 	}
 

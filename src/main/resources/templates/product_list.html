@@ -1,14 +1,35 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>商品一覧</title>
-<link rel="stylesheet" th:href="@{/css/style.css}">
+	<meta charset="UTF-8">
+	<title>商品一覧</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
 	<div th:replace="~{fragments/header :: header}"></div>
-	<div th:replace="~{fragments/tabs :: categoryTabs}"></div>
+
+	<form th:action="@{/products}" method="get" class="search-form">
+		<input type="text" name="keyword" th:value="${keyword}" placeholder="商品名で検索">
+		<select name="selectedCategory">
+			<!-- カテゴリをDBから取得して表示する -->
+			<option value="">すべて</option>
+			<option th:each="c : ${categories}" th:value="${c.name}" th:text="${c.name}" th:selected="${selectedCategory == c.name}"></option>
+		</select>
+		<select name="sort">
+			<option value="id" th:selected="${sort == 'id'}">新着順</option>
+			<option value="priceAsc" th:selected="${sort == 'priceAsc'}">価格が安い順</option>
+			<option value="priceDesc" th:selected="${sort == 'priceDesc'}">価格が高い順</option>
+		</select>
+		<!-- <input type="hidden" name="category" th:value="${selectedCategory}"> -->
+		<button type="submit">検索</button>
+	</form>
+
+	<p th:text="|${#lists.size(products)}件の商品|"></p>
+
+	<!-- <div th:replace="~{fragments/tabs :: categoryTabs}"></div> -->
 
 	<p th:if="${loginUser != null}">
 		<a th:href="@{/products/new}">
@@ -19,17 +40,17 @@
 	<div class="product-list">
 		<div th:if="${#lists.isEmpty(products)}">商品がありません</div>
 		<div th:each="p : ${products}" class="product-card">
-			<a th:href="@{/products/{id}(id=${p.id})}">
-				<p th:text="${p.name}" class="product-item"></p> <img
-				th:src="${p.img}" class="product-card img">
+			<a th:href="@{/products/{id}(id=${p.id}, keyword=${keyword}, sort=${sort}, selectedCategory=${selectedCategory})}">
+				<p th:text="${p.name}" class="product-item"></p> <img th:src="${p.img}" class="product-card img">
 			</a>
 			<p th:text="|${p.price}円|"></p>
 
 			<p th:if="${loginUser != null}">
-				<a th:href="@{/products/{id}/edit(id=${p.id})}">[編集]</a>
+				<a th:href="@{/products/{id}/edit(id=${p.id}, sort=${sort}, keyword=${keyword}, selectedCategory=${selectedCategory})}">[編集]</a>
 			</p>
 		</div>
 	</div>
 
 </body>
+
 </html>

@@ -10,21 +10,26 @@ body {
 	background: #800000;
 	color: white;
 	padding: 10px 20px;
+	margin-bottom: 10px;
+
 }
 
 /* ヘッダーの右 */
 .header-right {
 	display: flex;
-	justify-content: flex-end; /* 右寄せ */
+	justify-content: flex-end;
+	/* 右寄せ */
 	align-items: center;
-	gap: 15px; /* 要素間の間隔 */
+	gap: 15px;
+	/* 要素間の間隔 */
 }
 
 .header-left {
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-	gap: 15px; /* 要素間の間隔 */
+	gap: 15px;
+	/* 要素間の間隔 */
 }
 
 .header-right a {
@@ -62,6 +67,10 @@ body {
 	background-color: #4e73df;
 	color: white;
 	font-weight: bold;
+}
+
+.search-form {
+	margin-top: 10px;
 }
 
 .home {
@@ -358,4 +367,17 @@ button:hover {
 
 .form-row {
 	margin-bottom: 15px;
+}
+
+/* 戻るボタン */
+.returnBtn {
+	background: white;
+	color: #41619e;
+	border: 1px solid #41619e;
+}
+
+.returnBtn:hover {
+	background: #f5f8ff;
+	color: #41619e;
+	border: 1px solid #41619e;
 }

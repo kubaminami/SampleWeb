@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>商品詳細</title>
-<link rel="stylesheet" th:href="@{/css/style.css}">
+	<meta charset="UTF-8">
+	<title>商品詳細</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
 	<div th:replace="~{fragments/header :: header}"></div>
-	<div th:replace="~{fragments/home :: home}"></div>
+
+	<form th:action="@{/products}" method="get">
+		<input type="hidden" name="selectedCategory" th:value="${selectedCategory}">
+		<input type="hidden" name="keyword" th:value="${keyword}">
+		<input type="hidden" name="sort" th:value="${sort}">
+		<button type="submit" class="returnBtn">戻る</button>
+	</form>
 
 	<div class="product-detail">
 		<div class="image-area">
-			<img th:src="${product.img}" th:alt="${product.name}"
-				class="info-area">
+			<img th:src="${product.img}" th:alt="${product.name}" class="info-area">
 			<h2 th:text="${product.name}"></h2>
 			<p class="price" th:text="|${product.price}円|"></p>
 			<p class="desc" th:text="${product.description}"></p>
@@ -23,4 +30,5 @@
 		</div>
 	</div>
 </body>
+
 </html>
