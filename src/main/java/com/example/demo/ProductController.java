@@ -15,6 +15,10 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Comparator;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @Controller
 @RequestMapping("/products")
@@ -24,6 +28,8 @@ public class ProductController {
 	private ProductRepository proRepo;
 	@Autowired
 	private CategoryRepository catRepo;
+	@Autowired
+	private PageRepository pageRepo;
 
 	// 商品登録ページ
 	@GetMapping("/new")
@@ -116,33 +122,34 @@ public class ProductController {
 			@RequestParam(name = "selectedCategory", required = false) String selectedCategory,
 			@RequestParam(name = "keyword", required = false) String keyword,
 			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size,
 			Model model,
 			HttpSession session) {
 
 		User loginUser = (User) session.getAttribute("loginUser");
 		model.addAttribute("loginUser", loginUser);
 
-		List<Product> products;
+		Sort sortOption = switch (sort) {
+			case "priceAsc" -> Sort.by("price").ascending();
+			case "priceDesc" -> Sort.by("price").descending();
+			default -> Sort.by("id").ascending();
+		};
+		Pageable pageable = PageRequest.of(page, size, sortOption);
 
+		Page<Product> productPage;
 		if (selectedCategory != null && !selectedCategory.isBlank() && keyword != null && !keyword.isBlank()) {
-			products = proRepo.findByCategoryAndNameContainingIgnoreCase(selectedCategory, keyword);
+			productPage = pageRepo.findByCategoryAndNameContainingIgnoreCase(selectedCategory, keyword, pageable);
 		} else if (keyword != null && !keyword.isBlank()) {
-			products = proRepo.findByNameContainingIgnoreCase(keyword);
+			productPage = pageRepo.findByNameContainingIgnoreCase(keyword, pageable);
 		} else if (selectedCategory != null && !selectedCategory.isBlank()) {
-			products = proRepo.findByCategory(selectedCategory);
+			productPage = pageRepo.findByCategory(selectedCategory, pageable);
 		} else {
-			products = proRepo.findAllByOrderByIdAsc();
+			productPage = pageRepo.findAllByOrderByIdAsc(pageable);
 		}
 
-		if ("priceAsc".equals(sort)) {
-			products.sort(Comparator.comparing(Product::getPrice));
-		} else if ("priceDesc".equals(sort)) {
-			products.sort(Comparator.comparing(Product::getPrice).reversed());
-		} else {
-			products.sort(Comparator.comparing(Product::getId));
-		}
-
-		model.addAttribute("products", products);
+		model.addAttribute("products", productPage.getContent());
+		model.addAttribute("productPage", productPage);
 		model.addAttribute("selectedCategory", selectedCategory);
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("sort", sort);
