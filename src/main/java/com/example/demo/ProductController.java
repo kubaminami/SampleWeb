@@ -145,7 +145,7 @@ public class ProductController {
 		} else if (selectedCategory != null && !selectedCategory.isBlank()) {
 			productPage = pageRepo.findByCategory(selectedCategory, pageable);
 		} else {
-			productPage = pageRepo.findAllByOrderByIdAsc(pageable);
+			productPage = pageRepo.findAll(pageable);
 		}
 
 		model.addAttribute("products", productPage.getContent());
