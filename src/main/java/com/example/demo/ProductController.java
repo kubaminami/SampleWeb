@@ -31,7 +31,10 @@ public class ProductController {
 
 	// 商品登録ページ
 	@GetMapping("/new")
-	public String showCreateForm(Model model, HttpSession session) {
+	public String showCreateForm(Model model,
+			@RequestParam(name = "selectedCategory", required = false) String selectedCategory,
+			@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort, HttpSession session) {
 
 		User loginUser = (User) session.getAttribute("loginUser");
 
@@ -42,12 +45,18 @@ public class ProductController {
 		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("product", new Product());
 		model.addAttribute("categories", catRepo.findAll());
+		model.addAttribute("selectedCategory", selectedCategory);
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("sort", sort);
 		return "product-form";
 	}
 
 	// 登録処理
 	@PostMapping
-	public String createProduct(@Valid @ModelAttribute Product product, BindingResult result, Model model) {
+	public String createProduct(@Valid @ModelAttribute Product product, BindingResult result, Model model,
+			@RequestParam(name = "selectedCategory", required = false) String selectedCategory,
+			@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort) {
 
 		if (result.hasErrors()) {
 			model.addAttribute("categories", catRepo.findAll());
@@ -55,7 +64,10 @@ public class ProductController {
 		}
 
 		proRepo.save(product);
-		return "redirect:/products";
+
+		return "redirect:/products?selectedCategory=" + selectedCategory
+				+ "&keyword=" + keyword
+				+ "&sort=" + sort;
 	}
 
 	// 商品編集ページ

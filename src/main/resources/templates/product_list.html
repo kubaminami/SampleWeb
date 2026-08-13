@@ -31,9 +31,18 @@
 	<div class="list-form">
 		<p th:text="|${productPage.totalElements}件の商品|"></p>
 		<p th:if="${loginUser != null}">
-			<a th:href="@{/products/new}">
+
+			<!-- <a th:href="@{/products/new}">
 				<button class="add-product-btn">＋商品追加</button>
-			</a>
+			</a> -->
+
+		<form th:action="@{/products/new}" method="get">
+			<input type="hidden" name="selectedCategory" th:value="${selectedCategory}">
+			<input type="hidden" name="keyword" th:value="${keyword}">
+			<input type="hidden" name="sort" th:value="${sort}">
+			<button class="add-product-btn">＋商品追加</button>
+		</form>
+
 		</p>
 	</div>
 
@@ -53,28 +62,26 @@
 		</div>
 	</div>
 
-	 <!-- <div class="pagination" th:if="${productPage.totalPages > 1}">  -->
-<div class="pagination"
-     th:if="${productPage.totalPages > 1}"
-     th:with="
+	<!-- <div class="pagination" th:if="${productPage.totalPages > 1}">  -->
+	<div class="pagination" th:if="${productPage.totalPages > 1}" th:with="
         start=${T(java.lang.Math).max(0, productPage.number - 2)},
         end=${T(java.lang.Math).min(productPage.totalPages - 1, productPage.number + 2)}
      ">
 
 
-		
+
 		<a th:if="${!productPage.first}"
-		th:href="@{/products(page=0, size=${productPage.size}, keyword=${keyword}, selectedCategory=${selectedCategory}, sort=${sort})}">&lt;&lt;</a>
+			th:href="@{/products(page=0, size=${productPage.size}, keyword=${keyword}, selectedCategory=${selectedCategory}, sort=${sort})}">&lt;&lt;</a>
 		<a th:if="${!productPage.first}"
 			th:href="@{/products(page=${productPage.number - 1}, size=${productPage.size}, keyword=${keyword}, selectedCategory=${selectedCategory}, sort=${sort})}">&lt;</a>
 
 		<!-- <span th:each="pageNum : ${#numbers.sequence(0, productPage.totalPages - 1)}"> -->
 		<span th:each="pageNum : ${#numbers.sequence(start, end)}">
 
-		<a th:if="${pageNum == productPage.number}" th:text="${pageNum + 1}" class="active-page"></a>
-		<a th:unless="${pageNum == productPage.number}"
-			th:href="@{/products(page=${pageNum}, size=${productPage.size}, keyword=${keyword}, selectedCategory=${selectedCategory}, sort=${sort})}"
-			th:text="${pageNum + 1}"></a>
+			<a th:if="${pageNum == productPage.number}" th:text="${pageNum + 1}" class="active-page"></a>
+			<a th:unless="${pageNum == productPage.number}"
+				th:href="@{/products(page=${pageNum}, size=${productPage.size}, keyword=${keyword}, selectedCategory=${selectedCategory}, sort=${sort})}"
+				th:text="${pageNum + 1}"></a>
 		</span>
 
 		<a th:if="${!productPage.last}"
