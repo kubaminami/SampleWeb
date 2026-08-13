@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <body>
 
 	<header th:fragment="header" class="header">
@@ -26,10 +27,13 @@
 				</p>
 			</div>
 
-			<a href="/cart"><img src="/images/cart.png" alt="カート"
-				class="cart-icon"></a>
+			<a th:href="@{/cart(selectedCategory=${selectedCategory},keyword=${keyword},sort=${sort})}">
+				<img src="/images/cart.png" alt="カート" class="cart-icon">
+			</a>
+
 		</div>
 	</header>
 
 </body>
+
 </html>

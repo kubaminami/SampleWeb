@@ -8,7 +8,10 @@
 <body>
 
 	<div th:replace="~{fragments/header :: header}"></div>
-	<div th:replace="~{fragments/home :: home}"></div>
+	<!-- <div th:replace="~{fragments/home :: home}"></div> -->
+	<form th:action="@{/products}" method="get">
+		<button type="submit" class="returnBtn">商品一覧に戻る</button>
+	</form> 
 
 	<div class="form-container">
 

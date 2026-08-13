@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import java.util.List;
-import java.util.Comparator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -123,7 +121,7 @@ public class ProductController {
 			@RequestParam(name = "keyword", required = false) String keyword,
 			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "5") int size,
+			@RequestParam(name = "size", defaultValue = "3") int size,
 			Model model,
 			HttpSession session) {
 
@@ -154,6 +152,13 @@ public class ProductController {
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("sort", sort);
 		model.addAttribute("categories", catRepo.findAll());
+
+		int startPage = Math.max(0, productPage.getNumber() - 2);
+		int endPage = Math.min(productPage.getTotalPages() - 1,
+				productPage.getNumber() + 2);
+
+		model.addAttribute("startPage", startPage);
+		model.addAttribute("endPage", endPage);
 
 		return "product_list";
 	}

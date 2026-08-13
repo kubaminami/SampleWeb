@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>カート</title>
-<link rel="stylesheet" th:href="@{/css/style.css}">
+	<meta charset="UTF-8">
+	<title>カート</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
 	<div th:replace="~{fragments/header :: header}"></div>
-	<div th:replace="~{fragments/home :: home}"></div>
+
+	<form th:action="@{/products}" method="get">
+		<input type="hidden" name="selectedCategory" th:value="${selectedCategory}">
+		<input type="hidden" name="keyword" th:value="${keyword}">
+		<input type="hidden" name="sort" th:value="${sort}">
+		<button type="submit" class="returnBtn">商品一覧に戻る</button>
+	</form>
 
 	<table border="1" th:if="${!#lists.isEmpty(cart)}" class="wrap">
 		<thead>
@@ -24,10 +32,11 @@
 				<td><img th:src="${item.img}" class="cart-img"></td>
 				<td th:text="${item.name}" class="table-text"></td>
 				<td th:text="${item.price} + 円" class="table-text"></td>
-				<td><form th:action="@{/cart/delete/{id}(id=${item.id})}"
-						method="post">
+				<td>
+					<form th:action="@{/cart/delete/{id}(id=${item.id})}" method="post">
 						<button type="submit" class="delete-btn">削除</button>
-					</form></td>
+					</form>
+				</td>
 			</tr>
 		</tbody>
 	</table>
@@ -43,4 +52,5 @@
 	</div>
 
 </body>
+
 </html>

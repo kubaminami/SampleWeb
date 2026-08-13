@@ -2,6 +2,12 @@ body {
 	background-color: #f0f0f0;
 }
 
+.list-form{
+	display: flex;
+	align-items: center; /* 高さを中央揃え */
+	gap: 5px; /* 要素間の間隔 */
+}
+
 /* ヘッダー */
 .header {
 	display: flex;
@@ -109,7 +115,7 @@ body {
 }
 
 .product-item {
-	height: 48px;
+	height: 28px;
 }
 
 /* 画像 */

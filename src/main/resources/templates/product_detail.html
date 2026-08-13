@@ -25,6 +25,9 @@
 			<p class="price" th:text="|${product.price}円|"></p>
 			<p class="desc" th:text="${product.description}"></p>
 			<form th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
+				<input type="hidden" name="selectedCategory" th:value="${selectedCategory}">
+				<input type="hidden" name="keyword" th:value="${keyword}">
+				<input type="hidden" name="sort" th:value="${sort}">
 				<button class="btn">カートに追加</button>
 			</form>
 		</div>

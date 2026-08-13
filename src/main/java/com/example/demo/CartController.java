@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
@@ -33,7 +34,10 @@ public class CartController {
 
 	// カート追加
 	@PostMapping("/cart/add/{id}")
-	public String add(@PathVariable("id") long id, HttpSession session) {
+	public String add(@PathVariable("id") long id, HttpSession session,
+			@RequestParam(name = "selectedCategory", required = false) String selectedCategory,
+			@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort, RedirectAttributes attrs) {
 
 		List<Product> cart = (List<Product>) session.getAttribute("cart");
 
@@ -45,12 +49,43 @@ public class CartController {
 		Product product = repo.findById(id).orElseThrow();
 		cart.add(product);
 
+		// String redirectUrl = "/cart";
+		// StringBuilder query = new StringBuilder();
+		// if (selectedCategory != null && !selectedCategory.isBlank()) {
+		// query.append("selectedCategory=").append(selectedCategory).append("&");
+		// }
+		// if (keyword != null && !keyword.isBlank()) {
+		// query.append("keyword=").append(keyword).append("&");
+		// }
+		// if (sort != null && !sort.isBlank()) {
+		// query.append("sort=").append(sort);
+		// }
+		// if (query.length() > 0) {
+		// redirectUrl += "?" + query;
+		// }
+
+		// return "redirect:" + redirectUrl;
+
+		if (selectedCategory != null) {
+			attrs.addAttribute("selectedCategory", selectedCategory);
+		}
+
+		if (keyword != null) {
+			attrs.addAttribute("keyword", keyword);
+		}
+
+		attrs.addAttribute("sort", sort);
+
 		return "redirect:/cart";
+
 	}
 
 	// カート表示
 	@GetMapping("/cart")
-	public String view(HttpSession session, Model model) {
+	public String view(HttpSession session, Model model,
+			@RequestParam(name = "selectedCategory", required = false) String selectedCategory,
+			@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort) {
 
 		List<Product> cart = (List<Product>) session.getAttribute("cart");
 
@@ -61,6 +96,10 @@ public class CartController {
 		User loginUser = (User) session.getAttribute("loginUser");
 		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("cart", cart);
+
+		model.addAttribute("selectedCategory", selectedCategory);
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("sort", sort);
 
 		return "cart";
 	}
