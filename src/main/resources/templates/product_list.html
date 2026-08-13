@@ -30,20 +30,17 @@
 
 	<div class="list-form">
 		<p th:text="|${productPage.totalElements}件の商品|"></p>
-		<p th:if="${loginUser != null}">
-
+		<div th:if="${loginUser != null}">
 			<!-- <a th:href="@{/products/new}">
 				<button class="add-product-btn">＋商品追加</button>
 			</a> -->
-
-		<form th:action="@{/products/new}" method="get">
-			<input type="hidden" name="selectedCategory" th:value="${selectedCategory}">
-			<input type="hidden" name="keyword" th:value="${keyword}">
-			<input type="hidden" name="sort" th:value="${sort}">
-			<button class="add-product-btn">＋商品追加</button>
-		</form>
-
-		</p>
+			<form th:action="@{/products/new}" method="get">
+				<input type="hidden" name="selectedCategory" th:value="${selectedCategory}">
+				<input type="hidden" name="keyword" th:value="${keyword}">
+				<input type="hidden" name="sort" th:value="${sort}">
+				<button class="add-product-btn">＋商品追加</button>
+			</form>
+		</div>
 	</div>
 
 	<div class="product-list">
