@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>商品一覧</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+	<div th:replace="~{fragments/admin_header :: admin_header}"></div>
+
+	<form th:action="@{/products/admin}" method="get" class="search-form">
+		<input type="text" name="keyword" th:value="${keyword}" placeholder="商品名で検索">
+		<select name="selectedCategory">
+			<!-- カテゴリをDBから取得して表示する -->
+			<option value="">すべて</option>
+			<option th:each="c : ${categories}" th:value="${c.name}" th:text="${c.name}"
+				th:selected="${selectedCategory == c.name}"></option>
+		</select>
+		<select name="sort">
+			<option value="id" th:selected="${sort == 'id'}">新着順</option>
+			<option value="priceAsc" th:selected="${sort == 'priceAsc'}">価格が安い順</option>
+			<option value="priceDesc" th:selected="${sort == 'priceDesc'}">価格が高い順</option>
+		</select>
+		<!-- <input type="hidden" name="category" th:value="${selectedCategory}"> -->
+		<button type="submit">検索</button>
+	</form>
+
+	<div class="list-form">
+		<p th:text="|${productPage.totalElements}件の商品|"></p>
+
+		<form th:action="@{/products/new}" method="get">
+			<input type="hidden" name="selectedCategory" th:value="${selectedCategory}">
+			<input type="hidden" name="keyword" th:value="${keyword}">
+			<input type="hidden" name="sort" th:value="${sort}">
+			<button class="add-product-btn">＋商品追加</button>
+		</form>
+
+	</div>
+
+	<div class="product-list">
+		<div th:if="${#lists.isEmpty(products)}">商品がありません</div>
+		<div th:each="p : ${products}" class="product-card">
+			<a
+				th:href="@{/products/admin/{id}(id=${p.id}, keyword=${keyword}, sort=${sort}, selectedCategory=${selectedCategory})}">
+				<p th:text="${p.name}" class="product-item"></p> <img th:src="${p.img}" class="product-card img">
+			</a>
+			<p th:text="|${p.price}円|"></p>
+
+			<a
+				th:href="@{/products/{id}/edit(id=${p.id}, sort=${sort}, keyword=${keyword}, selectedCategory=${selectedCategory})}">[編集]</a>
+
+		</div>
+	</div>
+
+	<!-- <div class="pagination" th:if="${productPage.totalPages > 1}">  -->
+	<div class="pagination" th:if="${productPage.totalPages > 1}" th:with="
+        start=${T(java.lang.Math).max(0, productPage.number - 2)},
+        end=${T(java.lang.Math).min(productPage.totalPages - 1, productPage.number + 2)}
+     ">
+
+
+
+		<a th:if="${!productPage.first}"
+			th:href="@{/products/admin(page=0, size=${productPage.size}, keyword=${keyword}, selectedCategory=${selectedCategory}, sort=${sort})}">&lt;&lt;</a>
+		<a th:if="${!productPage.first}"
+			th:href="@{/products/admin(page=${productPage.number - 1}, size=${productPage.size}, keyword=${keyword}, selectedCategory=${selectedCategory}, sort=${sort})}">&lt;</a>
+
+		<!-- <span th:each="pageNum : ${#numbers.sequence(0, productPage.totalPages - 1)}"> -->
+		<span th:each="pageNum : ${#numbers.sequence(start, end)}">
+
+			<a th:if="${pageNum == productPage.number}" th:text="${pageNum + 1}" class="active-page"></a>
+			<a th:unless="${pageNum == productPage.number}"
+				th:href="@{/products/admin(page=${pageNum}, size=${productPage.size}, keyword=${keyword}, selectedCategory=${selectedCategory}, sort=${sort})}"
+				th:text="${pageNum + 1}"></a>
+		</span>
+
+		<a th:if="${!productPage.last}"
+			th:href="@{/products/admin(page=${productPage.number + 1}, size=${productPage.size}, keyword=${keyword}, selectedCategory=${selectedCategory}, sort=${sort})}">></a>
+		<a th:if="${!productPage.last}"
+			th:href="@{/products/admin(page=${productPage.totalPages - 1}, size=${productPage.size}, keyword=${keyword}, selectedCategory=${selectedCategory}, sort=${sort})}">>></a>
+	</div>
+
+</body>
+
+</html>

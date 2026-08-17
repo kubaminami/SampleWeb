@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/products")
@@ -36,13 +37,13 @@ public class ProductController {
 			@RequestParam(name = "keyword", required = false) String keyword,
 			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort, HttpSession session) {
 
-		User loginUser = (User) session.getAttribute("loginUser");
+		AdminUser adminLoginUser = (AdminUser) session.getAttribute("adminLoginUser");
 
-		if (loginUser == null) {
-			return "redirect:/login";
+		if (adminLoginUser == null) {
+			return "redirect:/admin/login";
 		}
 
-		model.addAttribute("loginUser", loginUser);
+		model.addAttribute("adminLoginUser", adminLoginUser);
 		model.addAttribute("product", new Product());
 		model.addAttribute("categories", catRepo.findAll());
 		model.addAttribute("selectedCategory", selectedCategory);
@@ -56,7 +57,7 @@ public class ProductController {
 	public String createProduct(@Valid @ModelAttribute Product product, BindingResult result, Model model,
 			@RequestParam(name = "selectedCategory", required = false) String selectedCategory,
 			@RequestParam(name = "keyword", required = false) String keyword,
-			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort) {
+			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort, RedirectAttributes attrs) {
 
 		if (result.hasErrors()) {
 			model.addAttribute("categories", catRepo.findAll());
@@ -65,9 +66,21 @@ public class ProductController {
 
 		proRepo.save(product);
 
-		return "redirect:/products?selectedCategory=" + selectedCategory
-				+ "&keyword=" + keyword
-				+ "&sort=" + sort;
+		// return "redirect:/products/admin?selectedCategory=" + selectedCategory
+		// + "&keyword=" + keyword
+		// + "&sort=" + sort;
+
+		if (selectedCategory != null) {
+			attrs.addAttribute("selectedCategory", selectedCategory);
+		}
+
+		if (keyword != null) {
+			attrs.addAttribute("keyword", keyword);
+		}
+
+		attrs.addAttribute("sort", sort);
+
+		return "redirect:/products/admin";
 	}
 
 	// 商品編集ページ
@@ -77,15 +90,15 @@ public class ProductController {
 			@RequestParam(name = "keyword", required = false) String keyword,
 			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort, HttpSession session) {
 
-		User loginUser = (User) session.getAttribute("loginUser");
+		AdminUser adminLoginUser = (AdminUser) session.getAttribute("adminLoginUser");
 
-		if (loginUser == null) {
-			return "redirect:/login";
+		if (adminLoginUser == null) {
+			return "redirect:/admin/login";
 		}
 
 		Product product = proRepo.findById(id).orElseThrow();
 
-		model.addAttribute("loginUser", loginUser);
+		model.addAttribute("adminLoginUser", adminLoginUser);
 		model.addAttribute("product", product);
 		model.addAttribute("categories", catRepo.findAll());
 
@@ -100,7 +113,8 @@ public class ProductController {
 	public String updateProduct(@PathVariable("id") Long id, @ModelAttribute Product form,
 			@RequestParam(name = "selectedCategory", required = false) String selectedCategory,
 			@RequestParam(name = "keyword", required = false) String keyword,
-			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort, Model model) {
+			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort, Model model,
+			RedirectAttributes attrs) {
 
 		Product product = proRepo.findById(id).orElseThrow();
 
@@ -112,9 +126,21 @@ public class ProductController {
 
 		proRepo.save(product);
 
-		return "redirect:/products?selectedCategory=" + selectedCategory
-				+ "&keyword=" + keyword
-				+ "&sort=" + sort;
+		// return "redirect:/products/admin?selectedCategory=" + selectedCategory
+		// + "&keyword=" + keyword
+		// + "&sort=" + sort;
+
+		if (selectedCategory != null) {
+			attrs.addAttribute("selectedCategory", selectedCategory);
+		}
+
+		if (keyword != null) {
+			attrs.addAttribute("keyword", keyword);
+		}
+
+		attrs.addAttribute("sort", sort);
+
+		return "redirect:/products/admin";
 	}
 
 	// 削除処理
@@ -123,7 +149,7 @@ public class ProductController {
 
 		proRepo.deleteById(id);
 
-		return "redirect:/products";
+		return "redirect:/products/admin";
 	}
 
 	// 一覧ページ
@@ -133,7 +159,7 @@ public class ProductController {
 			@RequestParam(name = "keyword", required = false) String keyword,
 			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "3") int size,
+			@RequestParam(name = "size", defaultValue = "16") int size,
 			Model model,
 			HttpSession session) {
 
@@ -175,6 +201,55 @@ public class ProductController {
 		return "product_list";
 	}
 
+	// 管理者用商品一覧ページ
+	@GetMapping("/admin")
+	public String adminList(
+			@RequestParam(name = "selectedCategory", required = false) String selectedCategory,
+			@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "16") int size,
+			Model model,
+			HttpSession session) {
+
+		AdminUser adminLoginUser = (AdminUser) session.getAttribute("adminLoginUser");
+		model.addAttribute("adminLoginUser", adminLoginUser);
+
+		Sort sortOption = switch (sort) {
+			case "priceAsc" -> Sort.by("price").ascending();
+			case "priceDesc" -> Sort.by("price").descending();
+			default -> Sort.by("id").ascending();
+		};
+		Pageable pageable = PageRequest.of(page, size, sortOption);
+
+		Page<Product> productPage;
+		if (selectedCategory != null && !selectedCategory.isBlank() && keyword != null && !keyword.isBlank()) {
+			productPage = pageRepo.findByCategoryAndNameContainingIgnoreCase(selectedCategory, keyword, pageable);
+		} else if (keyword != null && !keyword.isBlank()) {
+			productPage = pageRepo.findByNameContainingIgnoreCase(keyword, pageable);
+		} else if (selectedCategory != null && !selectedCategory.isBlank()) {
+			productPage = pageRepo.findByCategory(selectedCategory, pageable);
+		} else {
+			productPage = pageRepo.findAll(pageable);
+		}
+
+		model.addAttribute("products", productPage.getContent());
+		model.addAttribute("productPage", productPage);
+		model.addAttribute("selectedCategory", selectedCategory);
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("sort", sort);
+		model.addAttribute("categories", catRepo.findAll());
+
+		int startPage = Math.max(0, productPage.getNumber() - 2);
+		int endPage = Math.min(productPage.getTotalPages() - 1,
+				productPage.getNumber() + 2);
+
+		model.addAttribute("startPage", startPage);
+		model.addAttribute("endPage", endPage);
+
+		return "admin_product_list";
+	}
+
 	// 詳細ページ
 	@GetMapping("/{id:[0-9]+}")
 	public String detail(@PathVariable("id") Long id,
@@ -189,6 +264,22 @@ public class ProductController {
 		model.addAttribute("sort", sort);
 		model.addAttribute("selectedCategory", selectedCategory);
 		return "product_detail";
+	}
+
+	// 管理者用詳細ページ
+	@GetMapping("/admin/{id:[0-9]+}")
+	public String adminDetail(@PathVariable("id") Long id,
+			@RequestParam(name = "selectedCategory", required = false) String selectedCategory,
+			@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort, Model model,
+			HttpSession session) {
+		AdminUser adminLoginUser = (AdminUser) session.getAttribute("adminLoginUser");
+		model.addAttribute("adminLoginUser", adminLoginUser);
+		model.addAttribute("product", proRepo.findById(id).orElseThrow());
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("sort", sort);
+		model.addAttribute("selectedCategory", selectedCategory);
+		return "admin_product_detail";
 	}
 
 }

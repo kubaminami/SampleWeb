@@ -14,17 +14,20 @@ public class LoginController {
 	@Autowired
 	private UserRepository userRepository;
 
-	//ログインページ
+	@Autowired
+	private AdminUserRepository adminUserRepository;
+
+	// ユーザー用ログインページ
 	@GetMapping("/login")
 	public String showLoginForm() {
 		return "login";
 	}
 
-	//ログイン処理
+	// ユーザー用ログイン処理
 	@PostMapping("/login")
 	public String searchLoginUser(LoginForm form, HttpSession session, Model model) {
 
-		//未入力がある
+		// 未入力がある
 		if (form.getEmail() == null || form.getEmail().isBlank() || form.getPassword() == null
 				|| form.getPassword().isBlank()) {
 
@@ -33,7 +36,7 @@ public class LoginController {
 			return "login";
 		}
 
-		//メールアドレスが登録されていない
+		// メールアドレスが登録されていない
 		User user = userRepository.findByEmail(form.getEmail());
 
 		if (user == null) {
@@ -43,19 +46,19 @@ public class LoginController {
 			return "login";
 		}
 
-		//メールアドレスとパスワードの組み合わせが一致しない
+		// メールアドレスとパスワードの組み合わせが一致しない
 		if (!user.getPassword().equals(form.getPassword())) {
 			model.addAttribute("message", "メールアドレスまたはパスワードが違います。");
 
 			return "login";
 		}
 
-		//ログインする
+		// ログインする
 		session.setAttribute("loginUser", user);
 		return "redirect:/products";
 	}
 
-	//ログアウト処理
+	// ユーザー用ログアウト処理
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
 
@@ -64,7 +67,7 @@ public class LoginController {
 		return "redirect:/login";
 	}
 
-	//マイページを表示
+	// ユーザー用マイページを表示
 	@GetMapping("/mypage")
 	public String mypage(HttpSession session, Model model) {
 
@@ -77,5 +80,46 @@ public class LoginController {
 		model.addAttribute("loginUser", loginUser);
 
 		return "mypage";
+	}
+
+	// 管理者用ログインページ
+	@GetMapping("/admin/login")
+	public String showAdminLoginForm() {
+		return "admin_login";
+	}
+
+	// 管理者用ログイン処理
+	@PostMapping("/admin/login")
+	public String adminLogin(AdminLoginForm form, HttpSession session, Model model) {
+
+		// 未入力がある
+		if (form.getEmail() == null || form.getEmail().isBlank() || form.getPassword() == null
+				|| form.getPassword().isBlank()) {
+
+			model.addAttribute("message", "メールアドレスとパスワードを入力してください。");
+
+			return "admin_login";
+		}
+
+		// メールアドレスが登録されていない
+		AdminUser adminLoginUser = adminUserRepository.findByEmail(form.getEmail());
+
+		if (adminLoginUser == null) {
+
+			model.addAttribute("message", "メールアドレスまたはパスワードが違います。");
+
+			return "admin_login";
+		}
+
+		// メールアドレスとパスワードの組み合わせが一致しない
+		if (!adminLoginUser.getPassword().equals(form.getPassword())) {
+			model.addAttribute("message", "メールアドレスまたはパスワードが違います。");
+
+			return "admin_login";
+		}
+
+		// ログインする
+		session.setAttribute("adminLoginUser", adminLoginUser);
+		return "redirect:/products/admin";
 	}
 }

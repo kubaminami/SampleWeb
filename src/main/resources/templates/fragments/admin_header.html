@@ -1,0 +1,10 @@
+<header th:fragment="admin_header" class="header">
+
+    <div class="header-left">
+        <h1>My Shop</h1>
+        <p th:if="${adminLoginUser != null}">
+            ようこそ、 <span th:text="${adminLoginUser.name}"></span> さん
+        </p>
+    </div>
+
+</header>

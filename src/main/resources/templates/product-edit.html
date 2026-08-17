@@ -9,9 +9,9 @@
 
 <body>
 
-	<div th:replace="~{fragments/header :: header}"></div>
+	<div th:replace="~{fragments/admin_header :: admin_header}"></div>
 
-	<form th:action="@{/products}" method="get">
+	<form th:action="@{/products/admin}" method="get">
 		<input type="hidden" name="selectedCategory" th:value="${selectedCategory}">
 		<input type="hidden" name="keyword" th:value="${keyword}">
 		<input type="hidden" name="sort" th:value="${sort}">
