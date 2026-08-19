@@ -26,22 +26,19 @@
 				<th>価格</th>
 				<th>数量</th>
 				<th>税率</th>
-				<th>税額</th>
-				<th>小計</th>
+				<th>小計（税別）</th>
 				<th></th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="item : ${cart}">
+			<tr th:each="item : ${cart}" class="cart-item" th:attr="data-price=${item.price},data-tax-rate=${item.taxRate}">
 				<td><img th:src="${item.img}" class="cart-img"></td>
 				<td th:text="${item.name}" class="table-text"></td>
 				<td th:text="${item.price} + 円" class="table-text"></td>
-				<!-- <td th:text="${item.quantity}" class="table-text"></td> -->
-				<td><input type="number" th:value="${item.quantity}" min="1" class="table-text quantity-cell">
+				<td><input type="number" th:value="${item.quantity}" min="1" class="table-text quantity-cell" aria-label="数量">
 				</td>
 				<td th:text="${item.taxRate} + '%'" class="table-text"></td>
-				<td th:text="${item.price * item.taxRate/100 * item.quantity} + 円" class="table-text"></td>
-				<td th:text="${item.price * item.quantity + item.price * item.taxRate/100 * item.quantity} + 円" class="table-text"></td>
+				<td class="table-text"><span class="item-subtotal" th:text="${item.price * item.quantity}"></span> 円</td>
 
 				<td>
 					<form th:action="@{/cart/delete/{id}(id=${item.id})}" method="post">
@@ -55,12 +52,62 @@
 	<div th:with="total=${#aggregates.sum(cart.![price])}" class="center">
 		<p th:if="${total == null}">カートに入っている商品はありません</p>
 		<div th:unless="${total == null}">
-			合計： <span th:text="${total} + 円" class="total"></span>
+			<p>小計（税別）：<span id="subtotal">0</span> 円</p>
+			<p>8%消費税合計：<span id="tax-8">0</span> 円</p>
+			<p>10%消費税合計：<span id="tax-10">0</span> 円</p>
+			<p>合計： <span id="total" class="total">0</span> 円</p>
+
 			<form th:action="@{/order}" method="post">
 				<button type="submit" class="order-btn">注文</button>
 			</form>
 		</div>
 	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const cartItems = document.querySelectorAll('.cart-item');
+			const subtotalElement = document.getElementById('subtotal');
+			const tax8Element = document.getElementById('tax-8');
+			const tax10Element = document.getElementById('tax-10');
+			const totalElement = document.getElementById('total');
+
+			const formatYen = (amount) => amount.toLocaleString('ja-JP');
+
+			const updateTotals = () => {
+				let subtotal = 0;
+				let tax8 = 0;
+				let tax10 = 0;
+
+				cartItems.forEach((item) => {
+					const price = Number(item.dataset.price) || 0;
+					const taxRate = Number(item.dataset.taxRate) || 0;
+					const quantityInput = item.querySelector('.quantity-cell');
+					const quantity = Math.max(1, Number(quantityInput.value) || 1);
+					quantityInput.value = quantity;
+					const itemSubtotal = price * quantity;
+					const itemTax = Math.round(itemSubtotal * taxRate / 100);
+
+					subtotal += itemSubtotal;
+					if (taxRate === 8) {
+						tax8 += itemTax;
+					} else if (taxRate === 10) {
+						tax10 += itemTax;
+					}
+					item.querySelector('.item-subtotal').textContent = formatYen(itemSubtotal);
+				});
+
+				subtotalElement.textContent = formatYen(subtotal);
+				tax8Element.textContent = formatYen(tax8);
+				tax10Element.textContent = formatYen(tax10);
+				totalElement.textContent = formatYen(subtotal + tax8 + tax10);
+			};
+
+			cartItems.forEach((item) => {
+				item.querySelector('.quantity-cell').addEventListener('input', updateTotals);
+			});
+			updateTotals();
+		});
+	</script>
 
 </body>
 
