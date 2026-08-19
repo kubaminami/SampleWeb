@@ -24,6 +24,10 @@
 				<th></th>
 				<th>商品名</th>
 				<th>価格</th>
+				<th>数量</th>
+				<th>税率</th>
+				<th>税額</th>
+				<th>小計</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -32,6 +36,13 @@
 				<td><img th:src="${item.img}" class="cart-img"></td>
 				<td th:text="${item.name}" class="table-text"></td>
 				<td th:text="${item.price} + 円" class="table-text"></td>
+				<!-- <td th:text="${item.quantity}" class="table-text"></td> -->
+				<td><input type="number" th:value="${item.quantity}" min="1" class="table-text quantity-cell">
+				</td>
+				<td th:text="${item.taxRate} + '%'" class="table-text"></td>
+				<td th:text="${item.price * item.taxRate/100 * item.quantity} + 円" class="table-text"></td>
+				<td th:text="${item.price * item.quantity + item.price * item.taxRate/100 * item.quantity} + 円" class="table-text"></td>
+
 				<td>
 					<form th:action="@{/cart/delete/{id}(id=${item.id})}" method="post">
 						<button type="submit" class="delete-btn">削除</button>

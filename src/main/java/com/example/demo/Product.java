@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -41,4 +42,13 @@ public class Product {
 	@NotBlank
 	@Size(max = 255)
 	private String img;
+
+	@NotNull
+	@Min(0)
+	@Column(name = "tax_rate")
+	private Integer taxRate;
+
+	@NotNull
+	@Min(1)
+	private Integer quantity;
 }

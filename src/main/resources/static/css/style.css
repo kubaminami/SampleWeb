@@ -2,10 +2,12 @@ body {
 	background-color: #f0f0f0;
 }
 
-.list-form{
+.list-form {
 	display: flex;
-	align-items: center; /* 高さを中央揃え */
-	gap: 5px; /* 要素間の間隔 */
+	align-items: center;
+	/* 高さを中央揃え */
+	gap: 5px;
+	/* 要素間の間隔 */
 }
 
 /* ヘッダー */
@@ -391,9 +393,19 @@ button:hover {
 /* ページネーション */
 
 .active-page::before {
-    content: "[";
+	content: "[";
 }
 
 .active-page::after {
-    content: "]";
+	content: "]";
+}
+
+.quantity-cell {
+	align-items: center;
+	text-align: center;
+	width: 80px;
+}
+
+td {
+	vertical-align: middle;
 }

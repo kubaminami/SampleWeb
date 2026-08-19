@@ -27,9 +27,25 @@ public class CartController {
 	@Autowired
 	private OrderItemsRepository ordersItemsRepo;
 
-	// カート初期化
-	public List<Product> cart() {
-		return new ArrayList<>();
+	public static int calculateSubtotal(Product product) {
+		if (product == null) {
+			return 0;
+		}
+
+		int quantity = product.getQuantity() == null ? 0 : product.getQuantity();
+		int price = product.getPrice() == null ? 0 : product.getPrice();
+		int taxRate = product.getTaxRate() == null ? 0 : product.getTaxRate();
+		int subtotal = price * quantity;
+		int tax = (int) Math.round(subtotal * taxRate / 100.0);
+		return subtotal + tax;
+	}
+
+	public static int calculateCartTotal(List<Product> cart) {
+		if (cart == null || cart.isEmpty()) {
+			return 0;
+		}
+
+		return cart.stream().mapToInt(CartController::calculateSubtotal).sum();
 	}
 
 	// カート追加
@@ -46,25 +62,21 @@ public class CartController {
 			session.setAttribute("cart", cart);
 		}
 
-		Product product = repo.findById(id).orElseThrow();
-		cart.add(product);
+		// カートに追加されていない場合は新しい商品を追加
+		if (cart.stream().noneMatch(p -> p.getId() == id)) {
+			Product product = repo.findById(id).orElseThrow();
+			product.setQuantity(1); // 初期数量を1に設定
+			cart.add(product);
 
-		// String redirectUrl = "/cart";
-		// StringBuilder query = new StringBuilder();
-		// if (selectedCategory != null && !selectedCategory.isBlank()) {
-		// query.append("selectedCategory=").append(selectedCategory).append("&");
-		// }
-		// if (keyword != null && !keyword.isBlank()) {
-		// query.append("keyword=").append(keyword).append("&");
-		// }
-		// if (sort != null && !sort.isBlank()) {
-		// query.append("sort=").append(sort);
-		// }
-		// if (query.length() > 0) {
-		// redirectUrl += "?" + query;
-		// }
-
-		// return "redirect:" + redirectUrl;
+			// 既にカートに追加されている場合は数量を増やす
+		} else {
+			for (Product p : cart) {
+				if (p.getId() == id) {
+					p.setQuantity(p.getQuantity() + 1);
+					break;
+				}
+			}
+		}
 
 		if (selectedCategory != null) {
 			attrs.addAttribute("selectedCategory", selectedCategory);
@@ -91,11 +103,13 @@ public class CartController {
 
 		if (cart == null) {
 			cart = new ArrayList<>();
+			session.setAttribute("cart", cart);
 		}
 
 		User loginUser = (User) session.getAttribute("loginUser");
 		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("cart", cart);
+		model.addAttribute("total", calculateCartTotal(cart));
 
 		model.addAttribute("selectedCategory", selectedCategory);
 		model.addAttribute("keyword", keyword);
@@ -144,11 +158,7 @@ public class CartController {
 		Orders o = new Orders();
 		o.setDatetime(LocalDateTime.now());
 
-		int total = 0;
-		for (Product p : cart) {
-			total += p.getPrice();
-		}
-
+		int total = calculateCartTotal(cart);
 		o.setTotal(total);
 		ordersrepo.save(o);
 
