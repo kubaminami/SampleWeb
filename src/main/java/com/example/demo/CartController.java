@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
@@ -116,6 +117,24 @@ public class CartController {
 		model.addAttribute("sort", sort);
 
 		return "cart";
+	}
+
+	// カート数量更新
+	@PostMapping("/cart/update/{id}")
+	public ResponseEntity<Void> updateQuantity(@PathVariable("id") long id,
+			@RequestParam(name = "quantity", defaultValue = "1") int quantity, HttpSession session) {
+
+		List<Product> cart = (List<Product>) session.getAttribute("cart");
+		if (cart != null) {
+			for (Product product : cart) {
+				if (product.getId() == id) {
+					product.setQuantity(Math.max(1, quantity));
+					break;
+				}
+			}
+		}
+
+		return ResponseEntity.noContent().build();
 	}
 
 	// カートから削除

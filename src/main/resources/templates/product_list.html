@@ -50,7 +50,8 @@
 				th:href="@{/products/{id}(id=${p.id}, keyword=${keyword}, sort=${sort}, selectedCategory=${selectedCategory})}">
 				<p th:text="${p.name}" class="product-item"></p> <img th:src="${p.img}" class="product-card img">
 			</a>
-			<p th:text="|${p.price}円|"></p>
+			<p th:text="${#numbers.formatInteger(p.price, 3, 'COMMA')} + '円'"></p>
+
 
 			<p th:if="${loginUser != null}">
 				<a

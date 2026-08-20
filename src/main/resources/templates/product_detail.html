@@ -22,7 +22,8 @@
 		<div class="image-area">
 			<img th:src="${product.img}" th:alt="${product.name}" class="info-area">
 			<h2 th:text="${product.name}"></h2>
-			<p class="price" th:text="|${product.price}円|"></p>
+			<p th:text="${#numbers.formatInteger(product.price, 3, 'COMMA')} + '円'" class="price"></p>
+
 			<p class="desc" th:text="${product.description}"></p>
 			<form th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
 				<input type="hidden" name="selectedCategory" th:value="${selectedCategory}">

@@ -120,6 +120,7 @@ public class ProductController {
 
 		product.setName(form.getName());
 		product.setPrice(form.getPrice());
+		product.setTaxRate(form.getTaxRate());
 		product.setCategory(form.getCategory());
 		product.setDescription(form.getDescription());
 		product.setImg(form.getImg());

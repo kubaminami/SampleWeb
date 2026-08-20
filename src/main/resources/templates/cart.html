@@ -31,10 +31,10 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="item : ${cart}" class="cart-item" th:attr="data-price=${item.price},data-tax-rate=${item.taxRate}">
+			<tr th:each="item : ${cart}" class="cart-item" th:attr="data-price=${item.price},data-tax-rate=${item.taxRate},data-update-url=@{/cart/update/{id}(id=${item.id})}">
 				<td><img th:src="${item.img}" class="cart-img"></td>
 				<td th:text="${item.name}" class="table-text"></td>
-				<td th:text="${item.price} + 円" class="table-text"></td>
+				<td th:text="${#numbers.formatInteger(item.price, 3, 'COMMA')} + '円'" class="table-text"></td>
 				<td><input type="number" th:value="${item.quantity}" min="1" class="table-text quantity-cell" aria-label="数量">
 				</td>
 				<td th:text="${item.taxRate} + '%'" class="table-text"></td>
@@ -103,7 +103,18 @@
 			};
 
 			cartItems.forEach((item) => {
-				item.querySelector('.quantity-cell').addEventListener('input', updateTotals);
+				const quantityInput = item.querySelector('.quantity-cell');
+				quantityInput.addEventListener('input', updateTotals);
+				quantityInput.addEventListener('change', () => {
+					const quantity = Math.max(1, Number(quantityInput.value) || 1);
+					quantityInput.value = quantity;
+					fetch(item.dataset.updateUrl, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+						body: new URLSearchParams({ quantity }),
+						keepalive: true
+					});
+				});
 			});
 			updateTotals();
 		});

@@ -36,6 +36,12 @@
 			<div class="form-row">
 				<input type="number" th:field="*{price}" min="0" max="999999" required>
 			</div>
+
+			<div class="form-row">
+				<label class="form-label">税率（%）</label> <input type="number" th:field="*{taxRate}" min="0" max="100"
+					required>
+			</div>
+
 			<div class="form-row">
 
 				<label>カテゴリ</label>
