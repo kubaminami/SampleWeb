@@ -151,11 +151,6 @@ body {
 	max-width: 400px;
 }
 
-/* 商品名 */
-.info-area h2 {
-	margin-bottom: 10px;
-}
-
 /* 価格（強調） */
 .price {
 	font-size: 24px;
@@ -168,7 +163,7 @@ body {
 .desc {
 	margin-bottom: 20px;
 	/* 改行の保持 */
-	white-space: pre-wrap; 
+	white-space: pre-wrap;
 	overflow-wrap: anywhere;
 }
 
