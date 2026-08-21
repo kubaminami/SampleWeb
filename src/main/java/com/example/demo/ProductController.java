@@ -124,13 +124,13 @@ public class ProductController {
 		product.setTaxRate(form.getTaxRate());
 		product.setCategory(form.getCategory());
 		product.setDescription(form.getDescription());
-		product.setImg(form.getImg());
+		
+		// 商品画像のパスに「"/images/"＋商品名＋".png"」を設定する
+		product.setImg("/images/" + product.getName() + ".png");
 
 		proRepo.save(product);
 
-		// return "redirect:/products/admin?selectedCategory=" + selectedCategory
-		// + "&keyword=" + keyword
-		// + "&sort=" + sort;
+
 
 		if (selectedCategory != null) {
 			attrs.addAttribute("selectedCategory", selectedCategory);

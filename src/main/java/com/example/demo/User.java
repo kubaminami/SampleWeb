@@ -32,7 +32,4 @@ public class User {
 	@Max(64)
 	private String password;
 
-	@Column(name = "created_at")
-	private LocalDateTime createdAt;
-
 }

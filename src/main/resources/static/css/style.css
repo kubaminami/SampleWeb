@@ -167,6 +167,9 @@ body {
 /* 説明 */
 .desc {
 	margin-bottom: 20px;
+	/* 改行の保持 */
+	white-space: pre-wrap; 
+	overflow-wrap: anywhere;
 }
 
 /* カートに追加ボタン */

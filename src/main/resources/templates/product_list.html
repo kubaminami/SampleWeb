@@ -25,13 +25,7 @@
 			<option th:each="s : ${sortDropdown}" th:value="${s.code}" th:text="${s.name}"
 				th:selected="${sort == s.code}"></option>
 		</select>
-
-
-		<!-- <select name="sort">
-			<option value="id" th:selected="${sort == 'id'}">新着順</option>
-			<option value="priceAsc" th:selected="${sort == 'priceAsc'}">価格が安い順</option>
-			<option value="priceDesc" th:selected="${sort == 'priceDesc'}">価格が高い順</option>
-		</select> -->
+		
 		<button type="submit">検索</button>
 	</form>
 
