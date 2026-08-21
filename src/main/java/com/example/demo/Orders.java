@@ -19,10 +19,19 @@ public class Orders {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long no;
-	
+
+	private int userId;
+
+	private int subtotal;
+
+	private int tax8;
+
+	private int tax10;
+
 	private int total;
+
 	private LocalDateTime datetime;
-	
+
 	@OneToMany(mappedBy = "order")
 	private List<OrderItems> items;
 }

@@ -39,16 +39,12 @@ public class Product {
 	@Size(max = 20)
 	private String category;
 	
-	@NotBlank
 	@Size(max = 255)
 	private String img;
 
 	@NotNull
 	@Min(0)
+	@Max(100)
 	@Column(name = "tax_rate")
 	private Integer taxRate;
-
-	@NotNull
-	@Min(1)
-	private Integer quantity;
 }

@@ -22,7 +22,7 @@ public class OrderController {
 		
 		User loginUser = (User) session.getAttribute("loginUser");
 		model.addAttribute("loginUser", loginUser);
-		model.addAttribute("orders", ordersRepo.findAll());
+		model.addAttribute("orders", ordersRepo.findByUserId(loginUser.getId()));
 		return "order_list";
 	}
 
@@ -33,6 +33,8 @@ public class OrderController {
 		User loginUser = (User) session.getAttribute("loginUser");
 		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("order", ordersRepo.findById(no).orElseThrow());
+		model.addAttribute("no", no);
+		model.addAttribute("datetime", ordersRepo.findById(no).orElseThrow().getDatetime());
 
 		return "order_detail";
 	}

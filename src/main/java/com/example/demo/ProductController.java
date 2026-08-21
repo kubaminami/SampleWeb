@@ -29,6 +29,8 @@ public class ProductController {
 	private CategoryRepository catRepo;
 	@Autowired
 	private PageRepository pageRepo;
+	@Autowired
+	private SortRepository sortRepo;
 
 	// 商品登録ページ
 	@GetMapping("/new")
@@ -64,11 +66,10 @@ public class ProductController {
 			return "product-form";
 		}
 
-		proRepo.save(product);
+		// 商品画像のパスに「"/images/"＋商品名＋".png"」を設定する
+		product.setImg("/images/" + product.getName() + ".png");
 
-		// return "redirect:/products/admin?selectedCategory=" + selectedCategory
-		// + "&keyword=" + keyword
-		// + "&sort=" + sort;
+		proRepo.save(product);
 
 		if (selectedCategory != null) {
 			attrs.addAttribute("selectedCategory", selectedCategory);
@@ -199,6 +200,9 @@ public class ProductController {
 		model.addAttribute("startPage", startPage);
 		model.addAttribute("endPage", endPage);
 
+		// sortのドロップダウン
+		model.addAttribute("sortDropdown", sortRepo.findAllByNoOrderByDisplayAsc(1));
+
 		return "product_list";
 	}
 
@@ -247,6 +251,8 @@ public class ProductController {
 
 		model.addAttribute("startPage", startPage);
 		model.addAttribute("endPage", endPage);
+
+		model.addAttribute("sortDropdown", sortRepo.findAllByNoOrderByDisplayAsc(1));
 
 		return "admin_product_list";
 	}

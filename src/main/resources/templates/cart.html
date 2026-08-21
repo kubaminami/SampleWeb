@@ -26,22 +26,22 @@
 				<th>価格</th>
 				<th>数量</th>
 				<th>税率</th>
-				<th>小計（税別）</th>
+				<th>金額（税別）</th>
 				<th></th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="item : ${cart}" class="cart-item" th:attr="data-price=${item.price},data-tax-rate=${item.taxRate},data-update-url=@{/cart/update/{id}(id=${item.id})}">
-				<td><img th:src="${item.img}" class="cart-img"></td>
-				<td th:text="${item.name}" class="table-text"></td>
-				<td th:text="${#numbers.formatInteger(item.price, 3, 'COMMA')} + '円'" class="table-text"></td>
+			<tr th:each="item : ${cart}" class="cart-item" th:attr="data-price=${item.product.price},data-tax-rate=${item.product.taxRate},data-update-url=@{/cart/update/{id}(id=${item.product.id})}">
+				<td><img th:src="${item.product.img}" class="cart-img"></td>
+				<td th:text="${item.product.name}" class="table-text"></td>
+				<td th:text="${#numbers.formatInteger(item.product.price, 3, 'COMMA')} + ' 円'" class="table-text"></td>
 				<td><input type="number" th:value="${item.quantity}" min="1" class="table-text quantity-cell" aria-label="数量">
 				</td>
-				<td th:text="${item.taxRate} + '%'" class="table-text"></td>
-				<td class="table-text"><span class="item-subtotal" th:text="${item.price * item.quantity}"></span> 円</td>
+				<td th:text="${item.product.taxRate} + '%'" class="table-text"></td>
+				<td class="table-text"><span class="item-subtotal" th:text="${item.product.price * item.quantity}"></span> 円</td>
 
 				<td>
-					<form th:action="@{/cart/delete/{id}(id=${item.id})}" method="post">
+					<form th:action="@{/cart/delete/{id}(id=${item.product.id})}" method="post">
 						<button type="submit" class="delete-btn">削除</button>
 					</form>
 				</td>
@@ -49,9 +49,9 @@
 		</tbody>
 	</table>
 
-	<div th:with="total=${#aggregates.sum(cart.![price])}" class="center">
-		<p th:if="${total == null}">カートに入っている商品はありません</p>
-		<div th:unless="${total == null}">
+	<div class="center">
+		<p th:if="${#lists.isEmpty(cart)}">カートに入っている商品はありません</p>
+		<div th:unless="${#lists.isEmpty(cart)}">
 			<p>小計（税別）：<span id="subtotal">0</span> 円</p>
 			<p>8%消費税合計：<span id="tax-8">0</span> 円</p>
 			<p>10%消費税合計：<span id="tax-10">0</span> 円</p>

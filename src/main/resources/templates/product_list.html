@@ -19,28 +19,25 @@
 			<option th:each="c : ${categories}" th:value="${c.name}" th:text="${c.name}"
 				th:selected="${selectedCategory == c.name}"></option>
 		</select>
+
 		<select name="sort">
+			<!-- 並び順をDBから取得して表示する -->
+			<option th:each="s : ${sortDropdown}" th:value="${s.code}" th:text="${s.name}"
+				th:selected="${sort == s.code}"></option>
+		</select>
+
+
+		<!-- <select name="sort">
 			<option value="id" th:selected="${sort == 'id'}">新着順</option>
 			<option value="priceAsc" th:selected="${sort == 'priceAsc'}">価格が安い順</option>
 			<option value="priceDesc" th:selected="${sort == 'priceDesc'}">価格が高い順</option>
-		</select>
-		<!-- <input type="hidden" name="category" th:value="${selectedCategory}"> -->
+		</select> -->
 		<button type="submit">検索</button>
 	</form>
 
 	<div class="list-form">
 		<p th:text="|${productPage.totalElements}件の商品|"></p>
-		<div th:if="${loginUser != null}">
-			<!-- <a th:href="@{/products/new}">
-				<button class="add-product-btn">＋商品追加</button>
-			</a> -->
-			<form th:action="@{/products/new}" method="get">
-				<input type="hidden" name="selectedCategory" th:value="${selectedCategory}">
-				<input type="hidden" name="keyword" th:value="${keyword}">
-				<input type="hidden" name="sort" th:value="${sort}">
-				<button class="add-product-btn">＋商品追加</button>
-			</form>
-		</div>
+	</div>
 	</div>
 
 	<div class="product-list">
@@ -52,11 +49,6 @@
 			</a>
 			<p th:text="${#numbers.formatInteger(p.price, 3, 'COMMA')} + '円'"></p>
 
-
-			<p th:if="${loginUser != null}">
-				<a
-					th:href="@{/products/{id}/edit(id=${p.id}, sort=${sort}, keyword=${keyword}, selectedCategory=${selectedCategory})}">[編集]</a>
-			</p>
 		</div>
 	</div>
 

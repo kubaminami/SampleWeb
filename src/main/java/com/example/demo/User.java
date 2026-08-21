@@ -8,6 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,10 +23,13 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@Max(50)
 	private String name;
 
+	@Max(255)
 	private String email;
 
+	@Max(64)
 	private String password;
 
 	@Column(name = "created_at")

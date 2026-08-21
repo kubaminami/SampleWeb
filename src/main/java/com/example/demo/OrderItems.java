@@ -27,6 +27,8 @@ public class OrderItems {
 	
 	private String name;
 	private int price;
+	private int quantity;
+	private int taxRate;
 	private LocalDateTime datetime;
 
 }

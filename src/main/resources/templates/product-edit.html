@@ -60,13 +60,6 @@
 				<textarea th:field="*{description}" rows="5" cols="60" maxlength="255" required></textarea>
 			</div>
 
-			<div class="form-row">
-				<label>画像パス</label>
-			</div>
-			<div class="form-row">
-				<input type="text" th:field="*{img}" maxlength="255" required>
-			</div>
-
 			<input type="hidden" name="selectedCategory" th:value="${selectedCategory}">
 			<input type="hidden" name="keyword" th:value="${keyword}">
 			<input type="hidden" name="sort" th:value="${sort}">

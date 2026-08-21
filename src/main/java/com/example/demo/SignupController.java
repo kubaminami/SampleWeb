@@ -35,7 +35,29 @@ public class SignupController {
 
 			return "signup";
 		}
-		
+
+		//桁数チェック 名前は50文字、メールアドレスは255文字以内、パスワードは64文字以内
+		if (signupForm.getName().length() >= 50 ){
+			model.addAttribute("message", "名前は50文字以内で入力してください。");
+			return "signup";
+		}
+
+		if (signupForm.getEmail().length() >= 255) {
+			model.addAttribute("message", "メールアドレスは255文字以内で入力してください。");
+			return "signup";
+		}
+
+		if (signupForm.getPassword().length() >= 64) {
+			model.addAttribute("message", "パスワードは64文字以内で入力してください。");
+			return "signup";
+		}
+
+		//パスワード半角英数字チェック
+		if (!signupForm.getPassword().matches("^[a-zA-Z0-9]+$")) {
+			model.addAttribute("message", "パスワードは半角英数字で入力してください。");
+			return "signup";
+		}
+
 		//メールアドレスの重複
 		User existingUser = userRepository.findByEmail(signupForm.getEmail());
 

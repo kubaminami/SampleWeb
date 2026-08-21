@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>注文完了</title>
-<link rel="stylesheet" th:href="@{/css/style.css}">
+	<meta charset="UTF-8">
+	<title>注文完了</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
 	<div th:replace="~{fragments/header :: header}"></div>
-	<div th:replace="~{fragments/home :: home}"></div>
+	<form th:action="@{/products}" method="get">
+		<button type="submit" class="returnBtn">商品一覧に戻る</button>
+	</form>
 
 	<div class="center">
 		<h1 class="complete-text">注文完了</h1>
@@ -16,4 +20,5 @@
 	</div>
 
 </body>
+
 </html>

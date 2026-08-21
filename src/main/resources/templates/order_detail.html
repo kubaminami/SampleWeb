@@ -1,46 +1,54 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>注文詳細</title>
-<link rel="stylesheet" th:href="@{/css/style.css}">
+	<meta charset="UTF-8">
+	<title>注文詳細</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
 	<div th:replace="~{fragments/header :: header}"></div>
-	<!-- <div th:replace="~{fragments/home :: home}"></div> -->
 
 	<form th:action="@{/orders}" method="get">
 		<button type="submit" class="returnBtn">戻る</button>
 	</form>
 
+	<div class="center">
+		<p>注文番号：<span th:text="${#numbers.formatInteger(no, 6)}"></span></p>
+		<p>注文日時：<span th:text="${#temporals.format(datetime, 'yyyy/MM/dd HH:mm:ss' )}"></span></p>
+	</div>
+
 	<table border="1" th:if="${!#lists.isEmpty(order)}" class="wrap">
 		<thead>
 			<tr>
-				<th>注文番号</th>
 				<th>商品名</th>
 				<th>価格</th>
-				<th>注文日時</th>
+				<th>数量</th>
+				<th>税率</th>
+				<th>金額（税別）</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr th:each="item : ${order.items}">
-				<td th:text="${#numbers.formatInteger(item.order.no, 6)}"
-					class="table-text"></td>
 				<td th:text="${item.name}" class="table-text"></td>
 				<td th:text="${item.price} + 円" class="table-text"></td>
-				<td
-					th:text="${#temporals.format(item.datetime, 'yyyy/MM/dd HH:mm:ss')}"
-					class="table-text"></td>
+				<td th:text="${item.quantity}" class="table-text"></td>
+				<td th:text="${item.taxRate} + '%'" class="table-text"></td>
+				<td th:text="${item.price * item.quantity} + '円'" class="table-text"></td>
 			</tr>
-			<tr class="total-row">
-				<td></td>
-				<td>合計</td>
-				<td th:text="${order.total} + '円'" class="table-text"></td>
-				<td></td>
-			</tr>
+
 		</tbody>
 	</table>
 
+	<div class="center">
+		<p>小計（税別）：<span th:text="${order.subtotal} + '円'"></span></p>
+		<p>8%消費税合計：<span th:text="${order.tax8} + '円'"></span></p>
+		<p>10%消費税合計：<span th:text="${order.tax10} + '円'"></span></p>
+		<p><b>合計： <span th:text="${order.total} + '円'"></span></b></p>
+	</div>
+
 </body>
+
 </html>

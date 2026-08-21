@@ -28,12 +28,14 @@ public class CartController {
 	@Autowired
 	private OrderItemsRepository ordersItemsRepo;
 
-	public static int calculateSubtotal(Product product) {
-		if (product == null) {
+	// 商品ごとの税額を含めた小計を計算するメソッド
+	public static int calculateSubtotal(CartItem item) {
+		if (item == null || item.getProduct() == null) {
 			return 0;
 		}
 
-		int quantity = product.getQuantity() == null ? 0 : product.getQuantity();
+		Product product = item.getProduct();
+		int quantity = item.getQuantity();
 		int price = product.getPrice() == null ? 0 : product.getPrice();
 		int taxRate = product.getTaxRate() == null ? 0 : product.getTaxRate();
 		int subtotal = price * quantity;
@@ -41,7 +43,8 @@ public class CartController {
 		return subtotal + tax;
 	}
 
-	public static int calculateCartTotal(List<Product> cart) {
+	//カートの合計金額を計算するメソッド
+	public static int calculateCartTotal(List<CartItem> cart) {
 		if (cart == null || cart.isEmpty()) {
 			return 0;
 		}
@@ -56,7 +59,7 @@ public class CartController {
 			@RequestParam(name = "keyword", required = false) String keyword,
 			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort, RedirectAttributes attrs) {
 
-		List<Product> cart = (List<Product>) session.getAttribute("cart");
+		List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
 
 		if (cart == null) {
 			cart = new ArrayList<>();
@@ -64,16 +67,15 @@ public class CartController {
 		}
 
 		// カートに追加されていない場合は新しい商品を追加
-		if (cart.stream().noneMatch(p -> p.getId() == id)) {
+		if (cart.stream().noneMatch(item -> item.getProduct().getId() == id)) {
 			Product product = repo.findById(id).orElseThrow();
-			product.setQuantity(1); // 初期数量を1に設定
-			cart.add(product);
+			cart.add(new CartItem(product));
 
 			// 既にカートに追加されている場合は数量を増やす
 		} else {
-			for (Product p : cart) {
-				if (p.getId() == id) {
-					p.setQuantity(p.getQuantity() + 1);
+			for (CartItem item : cart) {
+				if (item.getProduct().getId() == id) {
+					item.increaseQuantity();
 					break;
 				}
 			}
@@ -100,7 +102,7 @@ public class CartController {
 			@RequestParam(name = "keyword", required = false) String keyword,
 			@RequestParam(name = "sort", required = false, defaultValue = "id") String sort) {
 
-		List<Product> cart = (List<Product>) session.getAttribute("cart");
+		List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
 
 		if (cart == null) {
 			cart = new ArrayList<>();
@@ -124,11 +126,11 @@ public class CartController {
 	public ResponseEntity<Void> updateQuantity(@PathVariable("id") long id,
 			@RequestParam(name = "quantity", defaultValue = "1") int quantity, HttpSession session) {
 
-		List<Product> cart = (List<Product>) session.getAttribute("cart");
+		List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
 		if (cart != null) {
-			for (Product product : cart) {
-				if (product.getId() == id) {
-					product.setQuantity(Math.max(1, quantity));
+			for (CartItem item : cart) {
+				if (item.getProduct().getId() == id) {
+					item.setQuantity(quantity);
 					break;
 				}
 			}
@@ -141,13 +143,13 @@ public class CartController {
 	@PostMapping("/cart/delete/{id}")
 	public String delete(@PathVariable("id") long id, HttpSession session) {
 
-		List<Product> cart = (List<Product>) session.getAttribute("cart");
+		List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
 
 		if (cart != null) {
 
-			for (Product p : cart) {
-				if (p.getId() == id) {
-					cart.remove(p);
+			for (CartItem item : cart) {
+				if (item.getProduct().getId() == id) {
+					cart.remove(item);
 					break;
 				}
 			}
@@ -168,7 +170,7 @@ public class CartController {
 			return "redirect:/login";
 		}
 
-		List<Product> cart = (List<Product>) session.getAttribute("cart");
+		List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
 		if (cart == null || cart.isEmpty()) {
 			return "redirect:/cart";
 		}
@@ -179,14 +181,41 @@ public class CartController {
 
 		int total = calculateCartTotal(cart);
 		o.setTotal(total);
+
+		// 税率ごとの計算
+		int subtotal = 0;
+		int tax8 = 0;
+		int tax10 = 0;
+
+		for (CartItem item : cart) {
+			Product p = item.getProduct();
+
+			int productSubtotal = p.getPrice() * item.getQuantity();
+			subtotal += productSubtotal;
+
+			if (p.getTaxRate() == 8) {
+				tax8 += (int) Math.round(productSubtotal * 0.08);
+			} else if (p.getTaxRate() == 10) {
+				tax10 += (int) Math.round(productSubtotal * 0.10);
+			}
+		}
+
+		o.setUserId(loginUser.getId());
+		o.setSubtotal(subtotal);
+		o.setTax8(tax8);
+		o.setTax10(tax10);
+		
 		ordersrepo.save(o);
 
 		// OrderItems
-		for (Product p : cart) {
+		for (CartItem item : cart) {
+			Product p = item.getProduct();
 			OrderItems i = new OrderItems();
 			i.setOrder(o);
 			i.setName(p.getName());
 			i.setPrice(p.getPrice());
+			i.setQuantity(item.getQuantity());
+			i.setTaxRate(p.getTaxRate());
 			i.setDatetime(o.getDatetime());
 			ordersItemsRepo.save(i);
 
